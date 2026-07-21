@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { formatDate } from '../../lib/site'
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+)
+---
+
+<BaseLayout title="Posts" description="Posts by Jeremy Magland.">
+  <div class="prose">
+    <h1>Posts</h1>
+    {posts.length === 0 && <p>No posts yet.</p>}
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li>
+            <span class="post-date">{formatDate(post.data.date)}</span>
+            <div>
+              <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+              {post.data.summary && (
+                <p class="post-summary">{post.data.summary}</p>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

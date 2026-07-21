@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content'
+import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/site'
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+  /** 'website' (default) or 'article' for posts */
+  ogType?: string
+  /** Include the JSON-LD Person block (home page only) */
+  person?: boolean
+}
+
+const { title, description, ogType = 'website', person = false } = Astro.props
+
+const fullTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE
+const metaDescription = description ?? SITE_DESCRIPTION
+const canonical = new URL(Astro.url.pathname, Astro.site)
+
+// Nav: pages collection ordered by frontmatter `order`, with home mapped to
+// "/" and a Posts link injected at position 5.
+const pageEntries = await getCollection('pages')
+const navLinks = [
+  ...pageEntries.map((p) => ({
+    href: p.id === 'home' ? '/' : `/${p.id}/`,
+    label: p.data.title,
+    order: p.data.order ?? 99,
+  })),
+  { href: '/posts/', label: 'Posts', order: 5 },
+].sort((a, b) => a.order - b.order)
+
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') + '/'
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href)
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Jeremy Magland',
+  url: 'https://jeremy.magland.org/',
+  jobTitle: 'Data Scientist',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Flatiron Institute',
+    url: 'https://www.simonsfoundation.org/flatiron',
+  },
+  sameAs: [
+    'https://github.com/magland',
+    'https://www.linkedin.com/in/jeremy-magland-23366a29/',
+    'https://orcid.org/0000-0002-5286-4375',
+  ],
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE_TITLE} — Posts`}
+      href="/rss.xml"
+    />
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta name="twitter:card" content="summary" />
+
+    {
+      person && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(personJsonLd)}
+        />
+      )
+    }
+  </head>
+  <body>
+    <div class="site">
+      <header class="site-header">
+        <a href="/" class="site-title">Jeremy Magland</a>
+        <nav class="site-nav">
+          {
+            navLinks.map((link) => (
+              <a href={link.href} class={isActive(link.href) ? 'active' : undefined}>
+                {link.label}
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <main class="site-main">
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} Jeremy Magland</span>
+        <a href="/rss.xml">RSS</a>
+      </footer>
+    </div>
+  </body>
+</html>
