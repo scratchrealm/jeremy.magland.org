@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content'
-import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/site'
+import { SITE_TITLE, SITE_DESCRIPTION, GOATCOUNTER_CODE } from '../lib/site'
 import { DEFAULT_THEME } from '../lib/themes'
 import ThemeSwitcher from '../components/ThemeSwitcher.astro'
 import '../styles/global.css'
@@ -83,6 +83,17 @@ const personJsonLd = {
         <script
           type="application/ld+json"
           set:html={JSON.stringify(personJsonLd)}
+        />
+      )
+    }
+
+    {
+      GOATCOUNTER_CODE && import.meta.env.PROD && (
+        <script
+          is:inline
+          data-goatcounter={`https://${GOATCOUNTER_CODE}.goatcounter.com/count`}
+          async
+          src="https://gc.zgo.at/count.js"
         />
       )
     }

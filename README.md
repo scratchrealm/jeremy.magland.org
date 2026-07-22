@@ -2,7 +2,8 @@
 
 Personal website, built with [Astro](https://astro.build). Content is written
 in Markdown and pre-rendered to static HTML at build time (fast, SEO-friendly;
-the only client-side JavaScript is the tiny theme switcher).
+the only client-side JavaScript is the tiny theme switcher and the analytics
+counter).
 
 ## Development
 
@@ -45,6 +46,15 @@ Each page is generated as static HTML with its own title, meta description,
 canonical URL, and Open Graph tags (see `src/layouts/BaseLayout.astro`).
 A sitemap is generated at build time and referenced from `public/robots.txt`;
 the home page carries schema.org Person markup.
+
+## Analytics
+
+Pageviews are counted by [GoatCounter](https://www.goatcounter.com) — no
+cookies, no personal data, ~3.5 KB of JavaScript. The script is emitted from
+`BaseLayout.astro` in production builds only, so `npm run dev` and
+`npm run preview` of a dev build do not pollute the stats. The account is set
+by `GOATCOUNTER_CODE` in `src/lib/site.ts`; set it to `''` to turn analytics
+off. Stats live at https://jeremy-magland.goatcounter.com.
 
 ## Deployment
 
