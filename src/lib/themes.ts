@@ -2,7 +2,7 @@
 // filename is its id, the switcher label is derived from it, and the file
 // is bundled automatically. Adding a theme = dropping in one CSS file.
 
-export const DEFAULT_THEME = 'classic'
+export const DEFAULT_THEME = 'forest'
 
 const themeFiles = import.meta.glob('../styles/themes/*.css', { eager: true })
 

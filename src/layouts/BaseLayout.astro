@@ -1,11 +1,9 @@
 ---
 import { getCollection } from 'astro:content'
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/site'
-import { THEMES, DEFAULT_THEME } from '../lib/themes'
+import { DEFAULT_THEME } from '../lib/themes'
 import ThemeSwitcher from '../components/ThemeSwitcher.astro'
 import '../styles/global.css'
-
-const themeIds = THEMES.map((t) => t.id)
 
 interface Props {
   title?: string
@@ -62,15 +60,6 @@ const personJsonLd = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script define:vars={{ themeIds }}>
-      // Apply the saved theme before first paint to avoid a flash.
-      try {
-        const saved = localStorage.getItem('theme')
-        if (saved && themeIds.includes(saved)) {
-          document.documentElement.dataset.theme = saved
-        }
-      } catch {}
-    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={metaDescription} />
     <link rel="canonical" href={canonical} />

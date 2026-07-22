@@ -14,9 +14,10 @@ import { THEMES } from '../lib/themes'
   {
     const select = document.querySelector('select.theme-switcher')
 
+    // Applying a theme is transient — it is not persisted, so every page
+    // load starts from the default theme again.
     const apply = (id) => {
       document.documentElement.dataset.theme = id
-      localStorage.setItem('theme', id)
       select.value = id
     }
 
