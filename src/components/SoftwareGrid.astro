@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets'
+import projects from '../data/software.json'
+import { thumbnailSlug } from '../lib/thumbnail-slug.mjs'
+
+// Thumbnails are keyed by a slug of the URL they were captured from (see
+// scripts/generate-thumbnails.mjs), so a project whose URL changed simply has
+// no matching image until the script is re-run.
+const thumbs = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/software/*.png',
+  { eager: true },
+)
+
+const cards = projects.map((p) => {
+  const primaryUrl = p.links[0]?.url
+  const thumbUrl = ('thumbnailUrl' in p ? p.thumbnailUrl : undefined) ?? primaryUrl
+  const thumb = thumbUrl
+    ? thumbs[`../assets/software/${thumbnailSlug(thumbUrl)}.png`]?.default
+    : undefined
+  return { ...p, primaryUrl, thumb }
+})
+---
+
+<div class="software-grid">
+  {
+    cards.map((p) => (
+      <article class="software-card">
+        <a href={p.primaryUrl} class="software-thumb">
+          {p.thumb ? (
+            <Image src={p.thumb} alt={`Screenshot of ${p.name}`} width={640} />
+          ) : (
+            <span class="software-thumb-placeholder">{p.name}</span>
+          )}
+        </a>
+        <div class="software-card-body">
+          <h3 class="software-name">
+            <a href={p.primaryUrl}>{p.name}</a>
+          </h3>
+          <p class="software-desc">{p.description}</p>
+          <p class="software-links">
+            {p.links.map((l) => (
+              <a href={l.url}>{l.label}</a>
+            ))}
+          </p>
+        </div>
+      </article>
+    ))
+  }
+</div>
