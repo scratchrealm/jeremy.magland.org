@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostThumbnails from '../../components/PostThumbnails.astro'
 import { formatDate, formatAuthors } from '../../lib/site'
 import HumanBadgeLight from '../../assets/not-by-ai/written-by-humans-white.svg'
 import HumanBadgeDark from '../../assets/not-by-ai/written-by-humans-black.svg'
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props
 const { Content } = await render(post)
 
-const { authors, originalUrl, writtenByHuman } = post.data
+const { authors, originalUrl, writtenByHuman, thumbnails } = post.data
 // Label the repost link with the source host, e.g. "mip.sh".
 const originalHost = originalUrl
   ? new URL(originalUrl).hostname.replace(/^www\./, '')
@@ -44,6 +45,7 @@ const originalHost = originalUrl
       }
     </header>
     <Content />
+    {thumbnails && thumbnails.length > 0 && <PostThumbnails urls={thumbnails} />}
     {
       writtenByHuman && (
         <footer class="post-footer">

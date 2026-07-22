@@ -7,6 +7,8 @@ authors:
   - Dan Fortunato
 originalUrl: https://mip.sh/blog/introducing-mip
 writtenByHuman: true
+thumbnails:
+  - https://mip.sh
 ---
 
 After months of planning and development, we are excited to announce the release of version 1.0.0 of [mip](https://mip.sh), a package manager for MATLAB.

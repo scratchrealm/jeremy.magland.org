@@ -5,6 +5,8 @@ summary: Benchmarking strategies for large matrix-matrix multiplication in the b
 authors:
   - Jeremy Magland
 writtenByHuman: true
+thumbnails:
+  - https://concept-collection.github.io/matmul-bench/
 ---
 
 While the desktop version of [numbl](https://numbl.org) links to OpenBLAS for linear algebra, the browser version cannot directly use native libraries, but must rely on technologies available in modern browsers, such as JavaScript and WebAssembly. While modern JavaScript is much faster than it used to be, it is orders of magnitude slower than OpenBLAS for operations such as large matrix-matrix multiplications.

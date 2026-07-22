@@ -1,0 +1,48 @@
+---
+import { Image } from 'astro:assets'
+import { thumbnailSlug } from '../lib/thumbnail-slug.mjs'
+
+interface Props {
+  urls: string[]
+}
+const { urls } = Astro.props
+
+// Screenshots are keyed by a slug of the URL they were captured from (see
+// scripts/generate-thumbnails.mjs), so a URL with no captured shot yet simply
+// falls back to a text link until `npm run thumbnails` is run.
+const thumbs = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/thumbnails/*.png',
+  { eager: true },
+)
+
+const cards = urls.map((url) => {
+  const { hostname, pathname } = new URL(url)
+  const label = (hostname.replace(/^www\./, '') + pathname).replace(/\/$/, '')
+  return {
+    url,
+    label,
+    thumb: thumbs[`../assets/thumbnails/${thumbnailSlug(url)}.png`]?.default,
+  }
+})
+---
+
+<div class="post-thumbs">
+  {
+    cards.map((c) => (
+      <figure class="post-thumb">
+        <a href={c.url} class="post-thumb-link" target="_blank" rel="noopener noreferrer">
+          {c.thumb ? (
+            <Image src={c.thumb} alt={`Screenshot of ${c.label}`} width={960} />
+          ) : (
+            <span class="post-thumb-placeholder">{c.label}</span>
+          )}
+        </a>
+        <figcaption>
+          <a href={c.url} target="_blank" rel="noopener noreferrer">
+            {c.label} →
+          </a>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>

@@ -4,6 +4,9 @@ date: 2026-06-26
 summary: Two browser demos that run an MCMC sampler written in plain MATLAB and let you watch it work.
 authors:
   - Jeremy Magland
+thumbnails:
+  - https://concept-collection.github.io/hitandrun-interactive/#figure/sampler
+  - https://concept-collection.github.io/walnuts-interactive/#figure/sampler
 ---
 
 Two small demos that run a Markov chain Monte Carlo sampler in the browser, with the algorithm written in plain, editable MATLAB syntax running via [numbl](https://numbl.org).

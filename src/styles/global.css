@@ -359,6 +359,55 @@ body {
   }
 }
 
+/* Auto-captured screenshot cards at the end of a post */
+
+.post-thumbs {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2rem 0 0;
+}
+
+.post-thumb {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.post-thumb-link {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-code);
+}
+
+.post-thumb-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.post-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 1rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.prose .post-thumb figcaption {
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+}
+
 /* Social / contact icon links */
 
 .social-links {

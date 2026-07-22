@@ -24,6 +24,8 @@ import { thumbnailSlug } from '../src/lib/thumbnail-slug.mjs'
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const dataFile = path.join(root, 'src/data/software.json')
 const outDir = path.join(root, 'src/assets/software')
+const postsDir = path.join(root, 'src/content/posts')
+const postThumbDir = path.join(root, 'src/assets/thumbnails')
 
 const VIEWPORT = { width: 1280, height: 800 }
 const CONCURRENCY = 3
@@ -33,22 +35,65 @@ const force = args.includes('--force')
 const onlyArg = args[args.indexOf('--only') + 1]
 const only = args.includes('--only') ? new Set(onlyArg.split(',')) : null
 
+// Read the `thumbnails` URLs out of every post's YAML frontmatter. Supports
+// both inline (`thumbnails: ["a", "b"]`) and block (`- a` per line) styles.
+async function collectPostThumbnails() {
+  if (!existsSync(postsDir)) return []
+  const out = []
+  for (const file of await readdir(postsDir)) {
+    if (!/\.mdx?$/.test(file)) continue
+    const text = await readFile(path.join(postsDir, file), 'utf8')
+    const fm = text.match(/^---\n([\s\S]*?)\n---/)
+    if (!fm) continue
+    const id = file.replace(/\.mdx?$/, '')
+    const inline = fm[1].match(/^thumbnails:\s*\[(.*)\]\s*$/m)
+    const block = fm[1].match(/^thumbnails:\s*\n((?:[ \t]*-[ \t]*.*\n?)+)/m)
+    let urls = []
+    if (inline) {
+      urls = inline[1].split(',')
+    } else if (block) {
+      urls = block[1].split('\n').map((l) => l.replace(/^[ \t]*-[ \t]*/, ''))
+    }
+    for (const raw of urls) {
+      const url = raw.trim().replace(/^["']|["']$/g, '')
+      if (url) out.push({ id, url })
+    }
+  }
+  return out
+}
+
+// Remove *.png in `dir` whose source URL is no longer in `wantedInDir`.
+async function prune(dir, wantedInDir) {
+  const keep = new Set(wantedInDir.map((t) => path.basename(t.dest)))
+  for (const file of await readdir(dir)) {
+    if (file.endsWith('.png') && !keep.has(file)) {
+      await unlink(path.join(dir, file))
+      console.log(`  pruned ${file} (no longer referenced)`)
+    }
+  }
+}
+
 const projects = JSON.parse(await readFile(dataFile, 'utf8'))
 await mkdir(outDir, { recursive: true })
+await mkdir(postThumbDir, { recursive: true })
 
-const wanted = projects
+// Software page: one screenshot per project (its primary link or thumbnailUrl).
+const softwareWanted = projects
   .map((p) => ({ id: p.id, url: p.thumbnailUrl ?? p.links[0]?.url }))
   .filter((t) => t.url)
   .map((t) => ({ ...t, dest: path.join(outDir, `${thumbnailSlug(t.url)}.png`) }))
 
-// Prune thumbnails whose URL no longer appears in software.json.
-const wantedFiles = new Set(wanted.map((t) => path.basename(t.dest)))
-for (const file of await readdir(outDir)) {
-  if (file.endsWith('.png') && !wantedFiles.has(file)) {
-    await unlink(path.join(outDir, file))
-    console.log(`  pruned ${file} (no longer referenced)`)
-  }
-}
+// Posts: screenshot each URL listed in a post's `thumbnails` frontmatter.
+const postWanted = (await collectPostThumbnails()).map((t) => ({
+  ...t,
+  dest: path.join(postThumbDir, `${thumbnailSlug(t.url)}.png`),
+}))
+
+const wanted = [...softwareWanted, ...postWanted]
+
+// Prune screenshots whose source URL is no longer referenced, per directory.
+await prune(outDir, softwareWanted)
+await prune(postThumbDir, postWanted)
 
 const targets = wanted.filter((t) => {
   if (only) return only.has(t.id)

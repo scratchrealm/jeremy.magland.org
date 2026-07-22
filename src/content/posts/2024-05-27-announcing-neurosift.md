@@ -4,6 +4,8 @@ date: 2024-05-27
 summary: Neurosift is a browser-based tool for exploring NWB files and the DANDI Archive, now published in the Journal of Open Source Software.
 authors:
   - Jeremy Magland
+thumbnails:
+  - https://neurosift.app/
 ---
 
 I'm happy to announce the release of [Neurosift](https://neurosift.app/), a browser-based tool for exploring [Neurodata Without Borders](https://www.nwb.org/) (NWB) files and the [DANDI Archive](https://dandiarchive.org/). The accompanying paper is now published in the [Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.06590).

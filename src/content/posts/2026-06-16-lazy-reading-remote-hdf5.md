@@ -5,6 +5,8 @@ summary: A self-contained demonstration of how a web application can lazy load d
 authors:
   - Jeremy Magland
 writtenByHuman: true
+thumbnails:
+  - https://concept-collection.github.io/remote-hdf5-lazy-read/
 ---
 
 [remote-hdf5-lazy-read](https://concept-collection.github.io/remote-hdf5-lazy-read/) is a self-contained demonstration of how a web application can lazy load data from remote HDF5 files. This is a core functionality of [Neurosift](https://neurosift.app/) and I wanted to separate it out in a project where you can inspect the source code, see how it fits together, and perhaps use it in your own project.
