@@ -9,6 +9,8 @@ description: >-
 
 - *Neurosift and AI tools for DANDI analysis*. NeuroDataReHack 2026, July 2026. [slides](https://magland.github.io/neurosift-ndrh-2026-presentation/)
 
+- *numbl and mip: what MATLAB is missing*. CCM Brown Bag, Flatiron Institute, March 2026. [slides](https://magland.github.io/mip-numbl-presentation/)
+
 - *Facilitating analysis of open neurophysiology data on the DANDI Archive using large language model tools*. Society for Neuroscience, Neuroscience 2025, San Diego, November 2025. [poster](https://zenodo.org/records/19834562/files/SfN%202025%20poster%20analysis%20agents.pdf?download=1)
 
 - *Figpack - Portable, Interactive Scientific Visualizations*. October 2025. [slides](https://magland.github.io/figpack-overview-presentation)
