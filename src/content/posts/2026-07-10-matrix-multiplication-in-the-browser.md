@@ -1,7 +1,7 @@
 ---
 title: Benchmarking matrix multiplication in the browser
 date: 2026-07-10
-summary: Benchmarking strategies for large matrix-matrix multiplication in the browser — plain JavaScript, WebGPU, C compiled to WebAssembly, and libFLAME compiled to WebAssembly — against a native reference.
+summary: Benchmarking strategies for large matrix-matrix multiplication in the browser.
 authors:
   - Jeremy Magland
 writtenByHuman: true
