@@ -1,0 +1,18 @@
+/* Nord — arctic blue-gray dark palette, frost cyan accent. */
+
+html[data-theme='nord'] {
+  --color-scheme: dark;
+  --bg: #2e3440;
+  --bg-code: #3b4252;
+  --text: #d8dee9;
+  --text-muted: #8f99ac;
+  --link: #88c0d0;
+  --border: #434c5e;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}

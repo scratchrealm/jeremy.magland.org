@@ -1,0 +1,59 @@
+---
+import { THEMES } from '../lib/themes'
+---
+
+<select
+  class="theme-switcher"
+  aria-label="Site theme"
+  title="Theme — press t to cycle, Shift+T to go back"
+>
+  {THEMES.map((t) => <option value={t.id}>{t.label}</option>)}
+</select>
+
+<script is:inline>
+  {
+    const select = document.querySelector('select.theme-switcher')
+
+    const apply = (id) => {
+      document.documentElement.dataset.theme = id
+      localStorage.setItem('theme', id)
+      select.value = id
+    }
+
+    select.value = document.documentElement.dataset.theme
+    select.addEventListener('change', () => apply(select.value))
+
+    let toast, toastTimer
+    const showToast = (label) => {
+      if (!toast) {
+        toast = document.createElement('div')
+        toast.className = 'theme-toast'
+        toast.setAttribute('role', 'status')
+        document.body.appendChild(toast)
+      }
+      toast.textContent = label
+      toast.classList.add('visible')
+      clearTimeout(toastTimer)
+      toastTimer = setTimeout(() => toast.classList.remove('visible'), 1200)
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 't' && e.key !== 'T') return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const el = e.target
+      if (
+        el instanceof HTMLElement &&
+        (el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA' ||
+          el.tagName === 'SELECT' ||
+          el.isContentEditable)
+      )
+        return
+      const ids = [...select.options].map((o) => o.value)
+      const step = e.key === 'T' ? -1 : 1
+      const i = (ids.indexOf(select.value) + step + ids.length) % ids.length
+      apply(ids[i])
+      showToast(select.options[i].textContent)
+    })
+  }
+</script>

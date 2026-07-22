@@ -1,0 +1,14 @@
+/* Sepia — warm paper tones, easy on the eyes. */
+
+html[data-theme='sepia'] {
+  --bg: #f8f2e3;
+  --bg-code: #efe6d0;
+  --text: #43382b;
+  --text-muted: #7d6f5c;
+  --link: #9c4221;
+  --border: #ddd0b8;
+  --font-body: 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-heading: 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-ui: Optima, Candara, Helvetica, Arial, sans-serif;
+  --font-mono: Menlo, Consolas, monospace;
+}

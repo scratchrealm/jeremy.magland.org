@@ -1,0 +1,23 @@
+/* Modern — clean system sans-serif, brighter blue accent. */
+
+html[data-theme='modern'] {
+  --bg: #ffffff;
+  --bg-code: #f3f4f6;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --link: #0b57d0;
+  --border: #e5e7eb;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+html[data-theme='modern'] .site-title,
+html[data-theme='modern'] .prose h1,
+html[data-theme='modern'] .prose h2 {
+  letter-spacing: -0.015em;
+}

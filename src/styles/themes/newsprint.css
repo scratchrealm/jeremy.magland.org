@@ -1,0 +1,25 @@
+/* Newsprint — high-contrast broadsheet: Times, deep red accent. */
+
+html[data-theme='newsprint'] {
+  --bg: #f7f7f2;
+  --bg-code: #ecece4;
+  --text: #111111;
+  --text-muted: #555550;
+  --link: #8f1f1f;
+  --border: #c9c9c0;
+  --font-body: 'Times New Roman', Times, serif;
+  --font-heading: 'Times New Roman', Times, serif;
+  --font-ui: Helvetica, Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+}
+
+html[data-theme='newsprint'] .site-title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme='newsprint'] .site-nav a {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+}

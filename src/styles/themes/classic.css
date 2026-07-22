@@ -1,0 +1,15 @@
+/* Classic — the original look: quiet serif, navy links, plain white.
+   Matches the :root fallback values in global.css. */
+
+html[data-theme='classic'] {
+  --bg: #ffffff;
+  --bg-code: #f5f5f5;
+  --text: #1a1a1a;
+  --text-muted: #666;
+  --link: #1a5276;
+  --border: #e0e0e0;
+  --font-body: Georgia, 'Times New Roman', serif;
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-ui: Helvetica, Arial, sans-serif;
+  --font-mono: Menlo, Consolas, monospace;
+}

@@ -6,7 +6,17 @@ description: >-
   computational methods and open-source software for scientific data analysis.
 ---
 
+import { Image } from 'astro:assets'
 import SocialLinks from '../../components/SocialLinks.astro'
+import portrait from '../../assets/jeremy-magland.jpg'
+
+<Image
+  src={portrait}
+  alt="Jeremy Magland"
+  class="portrait"
+  width={288}
+  loading="eager"
+/>
 
 I am a Data Scientist in the
 [Center for Computational Mathematics](https://www.simonsfoundation.org/flatiron/center-for-computational-mathematics)

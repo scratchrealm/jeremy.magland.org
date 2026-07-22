@@ -96,7 +96,7 @@ Selected open-source projects. Most of my software is developed in the open on
 
 - **FINUFFT** — fast, parallel library for the nonuniform fast Fourier
   transform on CPU and GPU; co-developed the original version with Alex
-  Barnett, no longer actively involved.
+  Barnett.
   [docs](https://finufft.readthedocs.io/) ·
   [source](https://github.com/flatironinstitute/finufft)
 

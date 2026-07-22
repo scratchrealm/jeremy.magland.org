@@ -1,0 +1,17 @@
+/* Portrait — palette sampled directly from the home-page photo:
+   background from the shirt's pale blue-white highlights, text from
+   hair/shadow brown, links from the tree-bark rust, borders and code
+   blocks from the plaid shirt's blue-grays. */
+
+html[data-theme='portrait'] {
+  --bg: #f8fdff;
+  --bg-code: #e4eefa;
+  --text: #2a211b;
+  --text-muted: #665a50;
+  --link: #8a5832;
+  --border: #d6e0ec;
+  --font-body: Georgia, 'Times New Roman', serif;
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-ui: Helvetica, Arial, sans-serif;
+  --font-mono: Menlo, Consolas, monospace;
+}

@@ -1,8 +1,8 @@
 # jeremy.magland.org
 
 Personal website, built with [Astro](https://astro.build). Content is written
-in Markdown and pre-rendered to static HTML at build time (fast, SEO-friendly,
-no client-side JavaScript).
+in Markdown and pre-rendered to static HTML at build time (fast, SEO-friendly;
+the only client-side JavaScript is the tiny theme switcher).
 
 ## Development
 
@@ -22,6 +22,22 @@ npm run dev
   first, and served at `/posts/<filename>/`.
 
 Adding a Markdown file is all that is needed — no code changes.
+
+## Themes
+
+The site ships several visual styles, switchable from the dropdown in the
+footer or by pressing `t` (next theme) / `Shift+T` (previous) anywhere on the
+page (the choice is saved in localStorage). Every CSS file in
+`src/styles/themes/` is a theme: the filename is its id, the switcher label
+is derived from it, and it is discovered automatically — adding a theme means
+dropping in one CSS file, no code changes.
+
+A theme overrides the CSS variables from `src/styles/global.css` (colors and
+fonts) under `html[data-theme='<name>']`, and may add extra rules scoped to
+the same selector for anything variables don't cover. Set
+`--color-scheme: dark` in dark themes so native controls render dark. The
+default theme is `DEFAULT_THEME` in `src/lib/themes.ts`; the `:root` values
+in `global.css` are a no-JS fallback and should mirror it.
 
 ## SEO
 

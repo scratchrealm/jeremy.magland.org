@@ -1,0 +1,20 @@
+/* Terminal — monospace everything, green on near-black. */
+
+html[data-theme='terminal'] {
+  --color-scheme: dark;
+  --bg: #0c0f0c;
+  --bg-code: #161d16;
+  --text: #b8ccb8;
+  --text-muted: #7a8f7a;
+  --link: #4ade80;
+  --border: #263426;
+  --font-body: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-heading: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-ui: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* Monospace runs wide; pull the base size down a notch. */
+html[data-theme='terminal'] body {
+  font-size: 0.9375rem;
+}
