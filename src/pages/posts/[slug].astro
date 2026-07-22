@@ -1,7 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { formatDate } from '../../lib/site'
+import { formatDate, formatAuthors } from '../../lib/site'
+import HumanBadgeLight from '../../assets/not-by-ai/written-by-humans-white.svg'
+import HumanBadgeDark from '../../assets/not-by-ai/written-by-humans-black.svg'
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts')
@@ -13,6 +15,12 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props
 const { Content } = await render(post)
+
+const { authors, originalUrl, writtenByHuman } = post.data
+// Label the repost link with the source host, e.g. "mip.sh".
+const originalHost = originalUrl
+  ? new URL(originalUrl).hostname.replace(/^www\./, '')
+  : undefined
 ---
 
 <BaseLayout
@@ -21,8 +29,38 @@ const { Content } = await render(post)
   ogType="article"
 >
   <article class="prose">
-    <p class="post-date">{formatDate(post.data.date)}</p>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <p class="post-meta">
+        {authors && authors.length > 0 && <span>{formatAuthors(authors)} · </span>}
+        {formatDate(post.data.date)}
+      </p>
+      {
+        originalUrl && (
+          <p class="post-original">
+            Originally posted at <a href={originalUrl}>{originalHost}</a>
+          </p>
+        )
+      }
+    </header>
     <Content />
+    {
+      writtenByHuman && (
+        <footer class="post-footer">
+          <a
+            class="human-badge"
+            href="https://notbyai.fyi"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Written by humans, not by AI"
+          >
+            {/* Light/dark variants toggled in CSS via the theme's --color-scheme */}
+            <HumanBadgeLight class="badge-light" width={131} height={42} />
+            <HumanBadgeDark class="badge-dark" width={131} height={42} />
+          </a>
+        </footer>
+      )
+    }
     <p><a href="/posts/">← All posts</a></p>
   </article>
 </BaseLayout>

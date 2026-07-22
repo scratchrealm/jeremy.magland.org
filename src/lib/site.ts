@@ -12,3 +12,13 @@ export function formatDate(date: Date): string {
     timeZone: 'UTC',
   })
 }
+
+const listFormatter = new Intl.ListFormat('en-US', {
+  style: 'long',
+  type: 'conjunction',
+})
+
+// "Ada" · "Ada and Grace" · "Ada, Grace, and Alan"
+export function formatAuthors(authors: string[]): string {
+  return listFormatter.format(authors)
+}

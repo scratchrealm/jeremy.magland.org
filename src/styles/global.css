@@ -217,6 +217,61 @@ body {
   color: var(--text-muted);
 }
 
+/* Header block on a single post: title, byline, source, badge */
+.post-header {
+  margin-bottom: 2rem;
+}
+
+.post-header h1 {
+  margin-bottom: 0.5rem;
+}
+
+/* Byline: authors + date */
+.post-meta {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* "Originally posted at ..." repost link */
+.post-original {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* Closing "written by humans" badge, set off from the post body */
+.post-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+/* "Written by humans, not by AI" badge (notbyai.fyi) */
+.human-badge {
+  display: inline-flex;
+  line-height: 0;
+}
+
+/* Show the white-pill badge by default (light themes); swap to the black-pill
+   badge under dark themes, which is the only signal needed since every dark
+   theme sets --color-scheme: dark. Browsers without style-query support fall
+   back to the light badge. */
+.human-badge .badge-dark {
+  display: none;
+}
+
+@container style(--color-scheme: dark) {
+  .human-badge .badge-light {
+    display: none;
+  }
+  .human-badge .badge-dark {
+    display: inline-flex;
+  }
+}
+
 /* Software cards */
 
 .software-grid {

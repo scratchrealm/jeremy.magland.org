@@ -19,6 +19,11 @@ const posts = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     summary: z.string().optional(),
+    authors: z.array(z.string()).optional(),
+    // Where the post first appeared, if it is a repost.
+    originalUrl: z.string().url().optional(),
+    // Shows the "Written by Humans, Not by AI" badge (notbyai.fyi).
+    writtenByHuman: z.boolean().optional(),
   }),
 })
 
