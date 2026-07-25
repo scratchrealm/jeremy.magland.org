@@ -187,6 +187,30 @@ body {
   text-align: left;
 }
 
+/* Equal-contribution marker in a publication author list. Sits inline right
+   after the name so it is read in the same glance, rather than as a footnote
+   the reader reaches only after already parsing the author order. Filled with
+   --link rather than tinted: every theme defines --link with strong contrast
+   against both --text and --bg, so a solid pill reads as a tag and pops in all
+   themes without needing a new per-theme accent variable. */
+.prose .co-first {
+  font-family: var(--font-ui);
+  font-size: 0.625rem;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--bg);
+  background: var(--link);
+  border-radius: 3px;
+  padding: 0.28em 0.5em 0.24em;
+  /* Left margin only, so the following comma stays tight against the pill. */
+  margin-left: 0.35em;
+  vertical-align: 0.12em;
+}
+
 /* Posts */
 
 .post-list {

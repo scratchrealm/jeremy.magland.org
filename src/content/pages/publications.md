@@ -40,7 +40,7 @@ description: >-
 - Barnett AH, **Magland JF**, af Klinteberg L. A parallel non-uniform fast Fourier transform library based on an "exponential of semicircle" kernel. 2018.
   [arXiv:1808.06736](https://arxiv.org/abs/1808.06736)
 
-- Chung JE, **Magland JF**, Barnett AH, Tolosa VM, Tooker AC, Lee KY, Shah KG, Felix SH, Frank LM, Greengard LF. A Fully Automated Approach to Spike Sorting. *Neuron*, 2017.
+- Chung JE, **Magland JF** <span class="co-first">co-first author</span>, Barnett AH, Tolosa VM, Tooker AC, Lee KY, Shah KG, Felix SH, Frank LM, Greengard LF. A Fully Automated Approach to Spike Sorting. *Neuron*, 2017.
   [doi:10.1016/j.neuron.2017.08.030](https://doi.org/10.1016/j.neuron.2017.08.030)
 
 - Li C, **Magland JF**, Zhao X, Seifert AC, Wehrli FW. Selective in vivo bone imaging with long-T2 suppressed PETRA MRI. *Magnetic Resonance in Medicine*, 2017.
