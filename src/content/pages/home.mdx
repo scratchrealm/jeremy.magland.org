@@ -8,6 +8,7 @@ description: >-
 
 import { Image } from 'astro:assets'
 import SocialLinks from '../../components/SocialLinks.astro'
+import RecentPosts from '../../components/RecentPosts.astro'
 import portrait from '../../assets/jeremy-magland.jpg'
 
 <Image
@@ -29,6 +30,8 @@ making complex datasets more accessible to researchers.
 This site collects my [software](/software),
 [publications](/publications), [presentations](/presentations), and
 occasional [posts](/posts).
+
+<RecentPosts count={5} />
 
 ## Contact
 

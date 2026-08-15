@@ -1,0 +1,54 @@
+---
+// The most recent posts, for the home page: a light list of title + date,
+// with a link to the full listing at /posts.
+import { getCollection } from 'astro:content'
+import { formatDate } from '../lib/site'
+
+interface Props {
+  count?: number
+}
+
+const { count = 3 } = Astro.props
+const posts = (await getCollection('posts'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, count)
+---
+
+{
+  posts.length > 0 && (
+    <section class="recent-posts">
+      <h2>Recent posts</h2>
+      <ul>
+        {posts.map((post) => (
+          <li>
+            <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+            <span class="date">{formatDate(post.data.date)}</span>
+          </li>
+        ))}
+      </ul>
+      <p>
+        <a href="/posts/">All posts →</a>
+      </p>
+    </section>
+  )
+}
+
+<style>
+  .recent-posts ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts li {
+    margin: 0.4rem 0;
+  }
+
+  .recent-posts .date {
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-left: 0.6rem;
+    white-space: nowrap;
+  }
+</style>
