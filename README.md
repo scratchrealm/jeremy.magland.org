@@ -19,8 +19,10 @@ npm run dev
   `description` (meta description for search/link previews). `home.mdx` is
   the front page; any other file `foo.md` is served at `/foo/`.
 - **Posts** live in `src/content/posts/*.md`. Frontmatter: `title`, `date`
-  (YYYY-MM-DD), optional `summary`. Posts are listed at `/posts`, newest
-  first, and served at `/posts/<filename>/`.
+  (YYYY-MM-DD), optional `summary`, optional `featured`. Posts are listed at
+  `/posts`, newest first, and served at `/posts/<filename>/`. Setting
+  `featured: true` makes a post a candidate for the short list on the home
+  page, which shows the five most recent candidates.
 
 Adding a Markdown file is all that is needed — no code changes.
 

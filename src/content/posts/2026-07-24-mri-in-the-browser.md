@@ -4,6 +4,7 @@ date: 2026-07-24
 summary: Three apps that cover the MRI workflow client-side, writing pulseq pulse sequences in MATLAB syntax (seqlab), simulating them on a digital phantom to get raw k-space (mri-scanner), and the spin physics underneath (mri-spins).
 authors:
   - Jeremy Magland
+featured: true
 thumbnails:
   - https://concept-collection.github.io/seqlab/
   - https://concept-collection.github.io/mri-scanner/

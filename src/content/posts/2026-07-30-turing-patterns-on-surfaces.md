@@ -4,6 +4,7 @@ date: 2026-07-30
 summary: Reaction-diffusion systems solved live in the browser, first on the sphere and then on curved closed surfaces, with the solver written in MATLAB syntax and executed by numbl on a WebGPU backend.
 authors:
   - Jeremy Magland
+featured: true
 ---
 
 [turing-sphere](https://concept-collection.github.io/turing-sphere/) and [turing-surface](https://concept-collection.github.io/turing-surface/) solve reaction-diffusion systems (Turing patterns) live in the browser. Spots and stripes form in real time on a 3D shape you can orbit, parameters are adjustable while the simulation runs, and you can download a movie of the run, encoded to MP4 in the browser. This is joint work with Dan Fortunato and Owen Melia.

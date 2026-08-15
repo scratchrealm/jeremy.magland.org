@@ -4,6 +4,7 @@ date: 2026-06-26
 summary: Two browser demos that run an MCMC sampler written in plain MATLAB and let you watch it work.
 authors:
   - Jeremy Magland
+featured: true
 thumbnails:
   - https://concept-collection.github.io/hitandrun-interactive/#figure/sampler
   - https://concept-collection.github.io/walnuts-interactive/#figure/sampler
