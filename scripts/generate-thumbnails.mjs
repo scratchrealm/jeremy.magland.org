@@ -111,6 +111,14 @@ const browser = await chromium.launch({
   channel: process.env.CHROME_PATH ? undefined : 'chrome',
   executablePath: process.env.CHROME_PATH,
   headless: true,
+  // WebGPU in headless Chrome (several of the screenshotted apps need it to
+  // render anything). Requires a GPU with a Vulkan driver on the host.
+  args: [
+    '--enable-unsafe-webgpu',
+    '--enable-features=Vulkan',
+    '--use-angle=vulkan',
+    '--ignore-gpu-blocklist',
+  ],
 })
 
 const failures = []
