@@ -4,6 +4,7 @@ date: 2026-07-23
 summary: A proof-of-concept JupyterLite kernel that runs numbl in Jupyter notebooks entirely in the browser.
 authors:
   - Jeremy Magland
+featured: true
 thumbnails:
   - https://concept-collection.github.io/jupyterlite-numbl-kernel/
 ---

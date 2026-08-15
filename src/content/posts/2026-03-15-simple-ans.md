@@ -4,6 +4,7 @@ date: 2026-03-15
 summary: A small, self-contained Python/C++ implementation of the Asymmetric Numeral Systems (ANS) entropy coder, plus an interactive ANS visualizer.
 authors:
   - Jeremy Magland
+featured: true
 writtenByHuman: true
 thumbnails:
   - https://concept-collection.github.io/ans-visualizer/

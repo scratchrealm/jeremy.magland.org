@@ -20,6 +20,10 @@ const posts = defineCollection({
     date: z.coerce.date(),
     summary: z.string().optional(),
     authors: z.array(z.string()).optional(),
+    // Marks the post as a candidate for the home page list. The home page
+    // shows the most recent few candidates (see components/RecentPosts.astro);
+    // posts without this flag are still listed at /posts.
+    featured: z.boolean().optional(),
     // Where the post first appeared, if it is a repost.
     originalUrl: z.string().url().optional(),
     // Shows the "Written by Humans, Not by AI" badge (notbyai.fyi).
