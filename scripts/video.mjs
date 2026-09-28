@@ -156,7 +156,8 @@ const slug = slugArg ?? path.basename(mp4, '.mp4')
 if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) fail(`"${slug}" is not a usable name; pass --slug with lowercase letters, digits, and hyphens`)
 const hash = (await sha256(mp4)).slice(0, 12)
 const mp4Key = `videos/${slug}-${hash}.mp4`
-const posterKey = poster ? `videos/${slug}-${hash}.jpg` : null
+// The poster is keyed by its own hash, so replacing it gives a new URL even when the video is unchanged.
+const posterKey = poster ? `videos/${slug}-${(await sha256(poster)).slice(0, 12)}.jpg` : null
 const mp4Url = `${PUBLIC_BASE}/${mp4Key}`
 const posterUrl = poster ? `${PUBLIC_BASE}/${posterKey}` : null
 
