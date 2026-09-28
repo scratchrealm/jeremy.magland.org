@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "thumbnails": "node scripts/generate-thumbnails.mjs"
+    "thumbnails": "node scripts/generate-thumbnails.mjs",
+    "video": "node scripts/video.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

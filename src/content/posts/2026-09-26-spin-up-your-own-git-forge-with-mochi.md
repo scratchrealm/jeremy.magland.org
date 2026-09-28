@@ -7,7 +7,7 @@ authors:
 featured: true
 ---
 
-<video controls playsinline preload="metadata" style="width: 100%;" src="/media/spin-up-your-own-git-forge-with-mochi.mp4"></video>
+<video controls playsinline preload="metadata" poster="https://media.magland.org/videos/spin-up-your-own-git-forge-with-mochi-6404521fd391.jpg" style="width: 100%;" src="https://media.magland.org/videos/spin-up-your-own-git-forge-with-mochi-6404521fd391.mp4"></video>
 
 Source: [magland/mochiforge](https://github.com/magland/mochiforge) · [npm: @magland/mochi](https://www.npmjs.com/package/@magland/mochi)
 

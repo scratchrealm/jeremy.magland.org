@@ -26,6 +26,16 @@ npm run dev
 
 Adding a Markdown file is all that is needed — no code changes.
 
+## Videos
+
+Video posts are screencasts recorded with [takes](https://vault1.magland.org/proof-of-concept/takes) plus a transcript. Videos are not committed to git; they are stored in the R2 bucket `jeremy-magland-org-media` (personal Cloudflare account) and served from https://media.magland.org. After exporting a video in takes:
+
+```bash
+npm run video -- <name fragment of the takes folder>
+```
+
+This uploads the MP4 and its thumbnail (used as the poster) under names that include a content hash, then either updates the `<video>` tag of the post that already embeds the video, or creates `src/content/posts/<today>-<slug>.md` with the title, description, and raw transcript from takes. Re-exporting and running it again gives a new URL, so cached copies never go stale. Any MP4 file also works as the argument, and `--slug NAME` overrides the name. See `scripts/video.mjs`. Uploads use wrangler, which must be logged in to the personal account.
+
 ## Themes
 
 The site ships several visual styles, switchable from the dropdown in the
