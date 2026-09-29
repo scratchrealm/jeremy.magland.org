@@ -71,4 +71,4 @@ Let's say I wanted to create a new vault in the cloud. I would run something lik
 npx @magland/mochi deploy fly vault5
 ```
 
-Interesting. Okay, well, in a separate video I will show you how to deploy a Mochi vault to the cloud. It's supposed to be as easy as one command if you sign up for [Fly.io](https://fly.io). Thanks.
+Interesting. Okay, well, in a [separate video](/posts/2026-09-28-deploy-mochi-vault-to-cloud/) I will show you how to deploy a Mochi vault to the cloud. It's supposed to be as easy as one command if you sign up for [Fly.io](https://fly.io). Thanks.
