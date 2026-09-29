@@ -598,6 +598,13 @@ body {
   letter-spacing: -0.05em;
 }
 
+.replay .pasted {
+  background: color-mix(in srgb, var(--link) 20%, transparent);
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 .replay .caret {
   display: inline-block;
   width: 0;

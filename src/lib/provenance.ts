@@ -3,8 +3,9 @@
 //
 // Events are ["s", t] | ["i", t, pos, n, src] | ["d", t, pos, n] |
 // ["r", t, pos, kind, ranges]. Every inserted character gets the next integer
-// id. Only characters that survive into the final text have known values;
-// the rest are shown as placeholders.
+// id and keeps the source of its insert ("t" typed, "p" pasted, ...). Only
+// characters that survive into the final text have known values; the rest are
+// shown as placeholders.
 
 type Ev = [string, number, ...unknown[]]
 
@@ -24,6 +25,12 @@ function decodeRanges(r: number[]): number[] {
 interface State {
   live: number[] // ids in document order
   next: number // next id to assign
+}
+
+export interface Run {
+  text: string
+  ghost: boolean // later deleted; text is placeholders
+  pasted: boolean
 }
 
 function apply(st: State, ev: Ev) {
@@ -53,11 +60,13 @@ function caretAfter(ev: Ev | undefined): number {
 export class Timeline {
   private snaps: { k: number; live: number[]; next: number }[] = []
   private finalIndex = new Map<number, number>() // id -> index in final text
+  private pasted: boolean[] = [] // by id
 
   constructor(readonly doc: ProvDoc) {
     const st: State = { live: [], next: 0 }
     this.snaps.push({ k: 0, live: [], next: 0 })
     doc.events.forEach((ev, i) => {
+      if (ev[0] === 'i') for (let j = 0; j < (ev[3] as number); j++) this.pasted.push(ev[4] === 'p')
       apply(st, ev)
       if ((i + 1) % 500 === 0) this.snaps.push({ k: i + 1, live: st.live.slice(), next: st.next })
     })
@@ -67,19 +76,20 @@ export class Timeline {
 
   // The document after the first k events, as runs of known text and of
   // placeholders for text that was later deleted, plus the caret position.
-  stateAt(k: number): { runs: { text: string; ghost: boolean }[]; caret: number } {
+  stateAt(k: number): { runs: Run[]; caret: number } {
     let s = this.snaps[0]
     for (const x of this.snaps) if (x.k <= k) s = x
     const st: State = { live: s.live.slice(), next: s.next }
     for (let i = s.k; i < k; i++) apply(st, this.doc.events[i])
-    const runs: { text: string; ghost: boolean }[] = []
+    const runs: Run[] = []
     for (const id of st.live) {
       const fi = this.finalIndex.get(id)
       const ghost = fi === undefined
+      const pasted = this.pasted[id]
       const ch = ghost ? '░' : this.doc.text[fi]
       const last = runs[runs.length - 1]
-      if (last && last.ghost === ghost) last.text += ch
-      else runs.push({ text: ch, ghost })
+      if (last && last.ghost === ghost && last.pasted === pasted) last.text += ch
+      else runs.push({ text: ch, ghost, pasted })
     }
     return { runs, caret: caretAfter(this.doc.events[k - 1]) }
   }

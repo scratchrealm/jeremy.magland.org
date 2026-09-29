@@ -15,26 +15,49 @@ const { src } = Astro.props
     <button type="button" class="replay-play" data-replay-play>Pause</button>
     <input type="range" class="replay-seek" data-replay-seek min="0" max="1" step="any" value="0" aria-label="Replay position" />
     <span class="replay-clock" data-replay-clock></span>
-    <select class="replay-speed" data-replay-speed aria-label="Replay length">
-      <option value="30">30 s</option>
-      <option value="60" selected>1 min</option>
-      <option value="180">3 min</option>
-      <option value="0">Typing pace</option>
+    <select class="replay-speed" data-replay-speed aria-label="Replay speed">
+      <option value="fast">Fast</option>
+      <option value="normal" selected>Normal</option>
+      <option value="slow">Slow</option>
+      <option value="x10">Typing pace ×10</option>
+      <option value="x5">Typing pace ×5</option>
+      <option value="x2">Typing pace ×2</option>
+      <option value="x1">Typing pace</option>
     </select>
     <button type="button" class="replay-close" data-replay-close aria-label="Close replay">Close</button>
   </div>
   <div class="replay-text" data-replay-text></div>
   <p class="replay-note">
+    <span class="pasted">Highlighted</span> text was pasted rather than typed.
     <span class="ghost">░░</span> marks text that was later deleted. Its content was never recorded.
-    Pauses longer than two seconds are shortened.
+    Long pauses are shortened.
     Recorded with <a href="https://magland.github.io/arewehuman/">arewehuman</a>.
   </p>
 </div>
 
 <script>
-  import { Timeline, type ProvDoc } from '../lib/provenance'
+  import { Timeline, type ProvDoc, type Run } from '../lib/provenance'
 
-  const PAUSE_CAP_MS = 2000
+  // Replay timing. For Fast/Normal/Slow, gaps up to PAUSE_MS are typing
+  // rhythm and keep their proportions, sped up so that all typing takes
+  // `typing` seconds. A longer pause also gets a visible beat that grows with
+  // the log of its length (`beat` ms per factor of e), so a five-minute pause
+  // reads as a real stop without taking five minutes. At Normal, 10 s shows as
+  // about 0.5 s, 1 min as 1.3 s, and 5 min as 2 s.
+  // The typing-pace speeds use the recorded timing with each gap capped at
+  // MAX_PAUSE_MS, played `mult` times faster.
+  const PAUSE_MS = 3000
+  const MAX_PAUSE_MS = 5000
+  type Speed = { typing: number; beat: number } | { mult: number }
+  const SPEEDS: Record<string, Speed> = {
+    fast: { typing: 30, beat: 200 },
+    normal: { typing: 60, beat: 430 },
+    slow: { typing: 150, beat: 800 },
+    x10: { mult: 10 },
+    x5: { mult: 5 },
+    x2: { mult: 2 },
+    x1: { mult: 1 },
+  }
 
   const panel = document.querySelector<HTMLElement>('[data-replay]')
   const opener = document.querySelector<HTMLButtonElement>('[data-replay-open]')
@@ -52,7 +75,7 @@ const { src } = Astro.props
 
     let tl: Timeline | null = null
     let events: ProvDoc['events'] = []
-    let ct = new Float64Array(0) // replay time (ms, pauses capped) of each event
+    let ct = new Float64Array(0) // replay time (ms) of each event
     let total = 0
     let pos = 0
     let playing = false
@@ -67,15 +90,31 @@ const { src } = Astro.props
         const doc: ProvDoc = await (await fetch(panel.dataset.src!)).json()
         tl = new Timeline(doc)
         events = doc.events
-        ct = new Float64Array(events.length)
-        for (let i = 1; i < events.length; i++)
-          ct[i] = ct[i - 1] + Math.min(events[i][1] - events[i - 1][1], PAUSE_CAP_MS)
-        total = events.length ? ct[events.length - 1] : 0
-        seek.max = String(total)
+        timing()
       } finally {
         opener.disabled = false
         opener.textContent = 'Watch this post being written'
       }
+    }
+
+    // Replay time of each event for the selected speed.
+    function timing() {
+      const sp = SPEEDS[speed.value] ?? SPEEDS.normal
+      const gap = (i: number) => events[i][1] - events[i - 1][1]
+      ct = new Float64Array(events.length)
+      if ('mult' in sp) {
+        for (let i = 1; i < events.length; i++) ct[i] = ct[i - 1] + Math.min(gap(i), MAX_PAUSE_MS) / sp.mult
+      } else {
+        let rhythm = 0
+        for (let i = 1; i < events.length; i++) rhythm += Math.min(gap(i), PAUSE_MS)
+        const scale = rhythm ? (sp.typing * 1000) / rhythm : 1
+        for (let i = 1; i < events.length; i++) {
+          const g = gap(i)
+          ct[i] = ct[i - 1] + scale * Math.min(g, PAUSE_MS) + (g > PAUSE_MS ? sp.beat * Math.log(g / PAUSE_MS) : 0)
+        }
+      }
+      total = events.length ? ct[events.length - 1] : 0
+      seek.max = String(Math.ceil(total))
     }
 
     // Number of events applied at replay time p.
@@ -105,11 +144,11 @@ const { src } = Astro.props
       const caretEl = document.createElement('span')
       caretEl.className = 'caret'
       let offset = 0
-      const add = (s: string, ghost: boolean) => {
+      const add = (s: string, r: Run) => {
         if (!s) return
-        if (ghost) {
+        if (r.ghost || r.pasted) {
           const g = document.createElement('span')
-          g.className = 'ghost'
+          g.className = [r.ghost && 'ghost', r.pasted && 'pasted'].filter(Boolean).join(' ')
           g.textContent = s
           textEl.append(g)
         } else textEl.append(s)
@@ -117,10 +156,10 @@ const { src } = Astro.props
       for (const r of runs) {
         const cut = caret - offset
         if (cut >= 0 && cut < r.text.length) {
-          add(r.text.slice(0, cut), r.ghost)
+          add(r.text.slice(0, cut), r)
           textEl.append(caretEl)
-          add(r.text.slice(cut), r.ghost)
-        } else add(r.text, r.ghost)
+          add(r.text.slice(cut), r)
+        } else add(r.text, r)
         offset += r.text.length
       }
       if (caret === offset) textEl.append(caretEl)
@@ -143,9 +182,7 @@ const { src } = Astro.props
       if (!playing) return
       let last = performance.now()
       const step = (now: number) => {
-        const dur = Number(speed.value)
-        const rate = dur ? total / (dur * 1000) : 1
-        pos = Math.min(total, pos + (now - last) * rate)
+        pos = Math.min(total, pos + (now - last))
         last = now
         render(true)
         if (pos >= total) setPlaying(false)
@@ -173,9 +210,19 @@ const { src } = Astro.props
 
     seek.addEventListener('input', () => {
       if (playing) setPlaying(false)
-      pos = Number(seek.value)
+      pos = Math.min(total, Number(seek.value))
       render(false)
       playBtn.textContent = pos >= total ? 'Replay' : 'Play'
+    })
+
+    // Keep the same point in the writing when the speed changes.
+    speed.addEventListener('change', () => {
+      if (!tl) return
+      const k = eventsAt(pos)
+      const atEnd = pos >= total
+      timing()
+      pos = atEnd ? total : ct[Math.max(0, k - 1)]
+      render(false)
     })
 
     $<HTMLButtonElement>('[data-replay-close]').addEventListener('click', () => {
