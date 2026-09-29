@@ -520,3 +520,107 @@ body {
     gap: 0.15rem;
   }
 }
+
+/* Replay of a post being written (components/ProvenanceReplay.astro). The
+   raw Markdown types itself out in place of the formatted body, in the same
+   font, so it reads as the post rather than as an embedded tool. */
+
+.post-replay {
+  margin: 0.25rem 0 0;
+}
+
+.replay-open,
+.replay-bar button {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--link);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.replay-open:hover,
+.replay-bar button:hover {
+  text-decoration: underline;
+}
+
+.replay-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem 0;
+  margin-bottom: 1rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.replay-bar .replay-play {
+  min-width: 3.2rem;
+  text-align: left;
+}
+
+.replay-seek {
+  flex: 1;
+  min-width: 4rem;
+  accent-color: var(--link);
+}
+
+.replay-clock {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.replay-speed {
+  font: inherit;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.1rem 0.2rem;
+}
+
+.replay-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: 50vh;
+}
+
+.replay .ghost {
+  color: var(--text-muted);
+  opacity: 0.55;
+  letter-spacing: -0.05em;
+}
+
+.replay .caret {
+  display: inline-block;
+  width: 0;
+  height: 1.2em;
+  border-left: 2px solid var(--link);
+  vertical-align: text-bottom;
+  margin-right: -2px;
+}
+
+.replay-note {
+  margin: 1.5rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 480px) {
+  .replay-bar {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.9rem;
+  }
+  .replay-seek {
+    order: 5;
+    flex-basis: 100%;
+  }
+}

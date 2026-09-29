@@ -1,0 +1,189 @@
+---
+// Replay of a post being written, from an arewehuman provenance file. The
+// trigger link lives in the post header ([data-replay-open]); when clicked,
+// the formatted body ([data-post-body]) is hidden and this panel shows the
+// raw Markdown as it was typed, in place. The .prov.json is fetched on first
+// use, so the post costs nothing extra until then.
+interface Props {
+  src: string
+}
+const { src } = Astro.props
+---
+
+<div class="replay" data-replay data-src={src} hidden>
+  <div class="replay-bar">
+    <button type="button" class="replay-play" data-replay-play>Pause</button>
+    <input type="range" class="replay-seek" data-replay-seek min="0" max="1" step="any" value="0" aria-label="Replay position" />
+    <span class="replay-clock" data-replay-clock></span>
+    <select class="replay-speed" data-replay-speed aria-label="Replay length">
+      <option value="30">30 s</option>
+      <option value="60" selected>1 min</option>
+      <option value="180">3 min</option>
+      <option value="0">Typing pace</option>
+    </select>
+    <button type="button" class="replay-close" data-replay-close aria-label="Close replay">Close</button>
+  </div>
+  <div class="replay-text" data-replay-text></div>
+  <p class="replay-note">
+    <span class="ghost">░░</span> marks text that was later deleted. Its content was never recorded.
+    Pauses longer than two seconds are shortened.
+    Recorded with <a href="https://magland.github.io/arewehuman/">arewehuman</a>.
+  </p>
+</div>
+
+<script>
+  import { Timeline, type ProvDoc } from '../lib/provenance'
+
+  const PAUSE_CAP_MS = 2000
+
+  const panel = document.querySelector<HTMLElement>('[data-replay]')
+  const opener = document.querySelector<HTMLButtonElement>('[data-replay-open]')
+  const body = document.querySelector<HTMLElement>('[data-post-body]')
+  if (panel && opener && body) setup(panel, opener, body)
+
+  function setup(panel: HTMLElement, opener: HTMLButtonElement, body: HTMLElement) {
+    const $ = <T extends HTMLElement>(sel: string) => panel.querySelector<T>(sel)!
+    const playBtn = $<HTMLButtonElement>('[data-replay-play]')
+    const seek = $<HTMLInputElement>('[data-replay-seek]')
+    const clock = $<HTMLElement>('[data-replay-clock]')
+    const speed = $<HTMLSelectElement>('[data-replay-speed]')
+    const textEl = $<HTMLElement>('[data-replay-text]')
+    const bar = $<HTMLElement>('.replay-bar')
+
+    let tl: Timeline | null = null
+    let events: ProvDoc['events'] = []
+    let ct = new Float64Array(0) // replay time (ms, pauses capped) of each event
+    let total = 0
+    let pos = 0
+    let playing = false
+    let raf = 0
+    let shownK = -1
+
+    async function load() {
+      if (tl) return
+      opener.disabled = true
+      opener.textContent = 'Loading…'
+      try {
+        const doc: ProvDoc = await (await fetch(panel.dataset.src!)).json()
+        tl = new Timeline(doc)
+        events = doc.events
+        ct = new Float64Array(events.length)
+        for (let i = 1; i < events.length; i++)
+          ct[i] = ct[i - 1] + Math.min(events[i][1] - events[i - 1][1], PAUSE_CAP_MS)
+        total = events.length ? ct[events.length - 1] : 0
+        seek.max = String(total)
+      } finally {
+        opener.disabled = false
+        opener.textContent = 'Watch this post being written'
+      }
+    }
+
+    // Number of events applied at replay time p.
+    function eventsAt(p: number) {
+      let lo = 0
+      let hi = events.length
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        if (ct[mid] <= p) lo = mid + 1
+        else hi = mid
+      }
+      return p <= 0 ? Math.min(1, events.length) : lo
+    }
+
+    const fmt = (ms: number) => {
+      const s = Math.floor(ms / 1000)
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+    }
+
+    function render(follow: boolean) {
+      const k = eventsAt(pos)
+      seek.value = String(pos)
+      if (k === shownK || !tl) return
+      shownK = k
+      const { runs, caret } = tl.stateAt(k)
+      textEl.replaceChildren()
+      const caretEl = document.createElement('span')
+      caretEl.className = 'caret'
+      let offset = 0
+      const add = (s: string, ghost: boolean) => {
+        if (!s) return
+        if (ghost) {
+          const g = document.createElement('span')
+          g.className = 'ghost'
+          g.textContent = s
+          textEl.append(g)
+        } else textEl.append(s)
+      }
+      for (const r of runs) {
+        const cut = caret - offset
+        if (cut >= 0 && cut < r.text.length) {
+          add(r.text.slice(0, cut), r.ghost)
+          textEl.append(caretEl)
+          add(r.text.slice(cut), r.ghost)
+        } else add(r.text, r.ghost)
+        offset += r.text.length
+      }
+      if (caret === offset) textEl.append(caretEl)
+      const end = events[events.length - 1]?.[1] ?? 0
+      clock.textContent = `${fmt(events[k - 1]?.[1] ?? 0)} / ${fmt(end)}`
+      if (follow && caretEl.isConnected) {
+        // Keep the caret in view without fighting the reader more than needed.
+        const r = caretEl.getBoundingClientRect()
+        const top = bar.getBoundingClientRect().bottom + 16
+        const bottom = window.innerHeight - 48
+        if (r.bottom > bottom) window.scrollBy(0, r.bottom - bottom + window.innerHeight / 3)
+        else if (r.top < top) window.scrollBy(0, r.top - top - window.innerHeight / 3)
+      }
+    }
+
+    function setPlaying(p: boolean) {
+      playing = p
+      playBtn.textContent = playing ? 'Pause' : pos >= total ? 'Replay' : 'Play'
+      cancelAnimationFrame(raf)
+      if (!playing) return
+      let last = performance.now()
+      const step = (now: number) => {
+        const dur = Number(speed.value)
+        const rate = dur ? total / (dur * 1000) : 1
+        pos = Math.min(total, pos + (now - last) * rate)
+        last = now
+        render(true)
+        if (pos >= total) setPlaying(false)
+        else raf = requestAnimationFrame(step)
+      }
+      raf = requestAnimationFrame(step)
+    }
+
+    opener.addEventListener('click', async () => {
+      await load()
+      body.hidden = true
+      panel.hidden = false
+      opener.hidden = true
+      pos = 0
+      shownK = -1
+      render(false)
+      panel.scrollIntoView({ block: 'start' })
+      setPlaying(true)
+    })
+
+    playBtn.addEventListener('click', () => {
+      if (!playing && pos >= total) pos = 0
+      setPlaying(!playing)
+    })
+
+    seek.addEventListener('input', () => {
+      if (playing) setPlaying(false)
+      pos = Number(seek.value)
+      render(false)
+      playBtn.textContent = pos >= total ? 'Replay' : 'Play'
+    })
+
+    $<HTMLButtonElement>('[data-replay-close]').addEventListener('click', () => {
+      setPlaying(false)
+      panel.hidden = true
+      body.hidden = false
+      opener.hidden = false
+      opener.scrollIntoView({ block: 'nearest' })
+    })
+  }
+</script>

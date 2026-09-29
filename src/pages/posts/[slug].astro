@@ -2,6 +2,9 @@
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PostThumbnails from '../../components/PostThumbnails.astro'
+import ProvenanceReplay from '../../components/ProvenanceReplay.astro'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { formatDate, formatAuthors } from '../../lib/site'
 import HumanBadgeLight from '../../assets/not-by-ai/written-by-humans-white.svg'
 import HumanBadgeDark from '../../assets/not-by-ai/written-by-humans-black.svg'
@@ -17,7 +20,15 @@ export async function getStaticPaths() {
 const { post } = Astro.props
 const { Content } = await render(post)
 
-const { authors, originalUrl, writtenByHuman, thumbnails } = post.data
+const { authors, originalUrl, writtenByHuman, thumbnails, provenance } = post.data
+
+// A replay is only honest if it ends in exactly the text being shown, so an
+// edit to the post that is not in its provenance file fails the build.
+if (provenance) {
+  const prov = JSON.parse(readFileSync(join(process.cwd(), 'public', provenance), 'utf8'))
+  if ((post.body ?? '').trim() !== prov.text.trim())
+    throw new Error(`Post ${post.id} differs from the text in its provenance file ${provenance}`)
+}
 // Label the repost link with the source host, e.g. "mip.sh".
 const originalHost = originalUrl
   ? new URL(originalUrl).hostname.replace(/^www\./, '')
@@ -43,8 +54,20 @@ const originalHost = originalUrl
           </p>
         )
       }
+      {
+        provenance && (
+          <p class="post-replay">
+            <button type="button" class="replay-open" data-replay-open>
+              Watch this post being written
+            </button>
+          </p>
+        )
+      }
     </header>
-    <Content />
+    <div data-post-body>
+      <Content />
+    </div>
+    {provenance && <ProvenanceReplay src={provenance} />}
     {thumbnails && thumbnails.length > 0 && <PostThumbnails urls={thumbnails} />}
     {
       writtenByHuman && (

@@ -1,0 +1,24 @@
+---
+title: Are we human?
+date: 2026-09-29
+summary: Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI?
+authors:
+  - Jeremy Magland
+featured: true
+writtenByHuman: true
+provenance: /provenance/2026-09-29-are-we-human.prov.json
+---
+
+Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI? I would like you to know the truth, which is of course that I crafted this document myself. But how can I convince you? I suppose you could just trust me when I tell you. But I'm not satisfied with that. I worked hard on this, and I worked especially hard to resist the temptation to throw it into Claude or ChatGPT. And I want you to know the truth! I want you to hear my voice, and to know it is my voice.
+
+A colleague pointed me to this cool project called [ReelDocs](https://blog.danromik.com/on-provably-writing-without-ai) by Dan Romik that tries to solve this problem by tracking the composition history of the document and providing a link where the reader can review that history, played back at high speed, with some metrics that give an indication of human authorship. Dan explains that he enjoys using AI for tasks like coding and math, but he very much doesn't enjoy "reading texts trying to pass themselves off as written by a human when they are actually written by AI"! I took that concept and made a similar app called "[arewehuman](https://magland.github.io/arewehuman)". It is similar to the ReelDocs app, but I put my own spin on it.
+
+Here's how it works. You compose the post [entirely inside the app](https://magland.github.io/arewehuman). As you type, the app records all your keystrokes with timestamps. It keeps track of the provenance of every character (letter, number, and symbol), and even tracks when you delete characters. In the end, you get your document as a markdown text file together with a companion provenance file (.prov.json) file that contains the detailed history of all the keystrokes. Every character can be traced from the end state back to where it was created. That provenance file can then be replayed in a variety of ways to the convincing of the reader that the text was human-generated.
+
+Wait, but will people see all my drafts???? Don't worry, they won't. Importantly, any text you delete along the way such that it doesn't make it into the final draft, will be redacted throughout. So you'll still get to see the writing process, all the edits/reorganization of text, but you won't actually see the identities of the characters if they don't ultimately make the final cut. 
+
+To be honest, I've been relying on Claude to write for me more than I would like, especially for human-facing software documentation, and I feel like I am losing the ability to craft good pros. It's been discouraging, because even if I write something of high quality using my own brain cells, the readers may not even know it or appreciate it. Alas, they might think it was AI generated anyway. So what even is the point?
+
+Well with this idea from Dan Romik and this app, I feel I can now return to the time before AI slop because I can write (albeit possibly lousy) pros and have a means of documenting my writing process to the convincing of my audience of my human-ness. And in fact, things are better than before (this idea comes from my daughter), because now the bar for good grammar, etc, is lower than it was, because human-written text is ultimately going to be superior to AI-generated slop even if the style or grammar is way worse and the ideas are roughly put together. Because human-human connection has value. More value than human-computer-human communication.
+
+So I'm sure you'll forgive any sloppiness of my writing, if there is any, because if it's slop, it's glorious human slop.
