@@ -23,10 +23,15 @@ const { Content } = await render(post)
 const { authors, originalUrl, writtenByHuman, thumbnails, provenance } = post.data
 
 // A replay is only honest if it ends in exactly the text being shown, so an
-// edit to the post that is not in its provenance file fails the build.
+// edit to the post that is not in its provenance file fails the build. A
+// leading "# <title>" line in the provenance text is shown as the post title
+// rather than in the body, so it is not expected in the body.
 if (provenance) {
   const prov = JSON.parse(readFileSync(join(process.cwd(), 'public', provenance), 'utf8'))
-  if ((post.body ?? '').trim() !== prov.text.trim())
+  let expected = prov.text.trim()
+  const header = expected.match(/^# (.*)\n/)
+  if (header && header[1].trim() === post.data.title) expected = expected.slice(header[0].length).trim()
+  if ((post.body ?? '').trim() !== expected)
     throw new Error(`Post ${post.id} differs from the text in its provenance file ${provenance}`)
 }
 // Label the repost link with the source host, e.g. "mip.sh".

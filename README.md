@@ -26,6 +26,16 @@ npm run dev
 
 Adding a Markdown file is all that is needed — no code changes.
 
+## Provenance posts
+
+Posts written in [arewehuman](https://magland.github.io/arewehuman/) can be published together with their provenance file, which adds a "Watch this post being written" replay to the post page:
+
+```bash
+npm run prov -- ~/Downloads/<name>.prov.json
+```
+
+This copies the file to `public/provenance/<date>-<slug>.prov.json` and creates `src/content/posts/<date>-<slug>.md` with the `provenance` frontmatter field set. The title comes from a leading `# ` header line of the text (left out of the body, since the page shows it as the title), or else from the file's title. The build fails if the post body differs from the text in the provenance file, so edits must be made in arewehuman and re-exported. See `scripts/prov.mjs`.
+
 ## Videos
 
 Video posts are screencasts recorded with [takes](https://vault1.magland.org/proof-of-concept/takes) plus a transcript. Videos are not committed to git; they are stored in the R2 bucket `jeremy-magland-org-media` (personal Cloudflare account) and served from https://media.magland.org. After exporting a video in takes:

@@ -1,0 +1,22 @@
+---
+title: "Embracing the non-scalability"
+date: 2026-09-30
+summary: "Recently I've been writing software that doesn't scale, and embracing it!"
+authors:
+  - Jeremy Magland
+featured: true
+writtenByHuman: true
+provenance: /provenance/2026-09-30-embracing-the-non-scalability.prov.json
+---
+
+Recently I've been writing software that doesn't scale, and embracing it! Two recent projects, created with the help of AI coding assistants I should say, are Mochi (a GitHub replacement) and Dango (a Slack+Zoom replacement). These are super simple to spin up, use, and even deploy, but fail to scale to large numbers of users. But I'm realizing that's okay, because these are mainly personal tools to accelerate research for myself and a relatively small number of close collaborators. The expectation is that people not in my circle can just spin up their own github, slack, or zoom replacements for their own personal use. It's certainly easy enough. (And in fact maybe someday the different Mochi Vaults or Dango Workspace instances could talk to one another somehow).
+
+The failure to scale stems from two unconventional decisions: (1) The applications don't use any database, just a directory on a disk -- either local or in a virtual machine in the cloud; (2) The server is a single process with no load balancing. Both of these decisions lead to software that doesn't scale, but also lead to some huge advantages.
+
+First, it's way simpler to develop single process servers that act on a single directory. It took me only a couple weeks to create the first versions of Mochi and Dango, using coding assistants with development time interleaved with a bunch of other projects I am working on concurrently.
+
+Second, it's way simpler for the users to get these tools up and running. With nodejs installed, local deployment is a single command pointed to a directory. With docker installed and a fly.io account, deployment to the cloud is also a single command. What could be easier?
+
+Third, it's more portable and flexible in terms of backups and morphing data. Incremental backups can be achieved with a simple cron job that copies a directory -- and if the backup is local, you can use the single command to serve individual snapshots from the past. In the case of Mochi, collections (gh organizations) are just directories, repositories are just bare git repos on disk, and issues/PRs/etc are just files. The consequence is that you can use other tools and techniques to read or manipulate a Mochi vault or a Dango workspace.
+
+So yeah, from design day one I commit the sin of making utterly non-scalable software. But the benefits are crucial for my use cases. If you're curious you can make a local [mochi vault](https://github.com/magland/mochiforge) or a [dango workspace](https://github.com/magland/dango) with a single command. Enjoy the simplicity!
