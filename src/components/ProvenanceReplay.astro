@@ -26,12 +26,16 @@ const { src } = Astro.props
     </select>
     <button type="button" class="replay-close" data-replay-close>Back to the post</button>
   </div>
+  <p class="replay-about">
+    A replay of every keystroke, recorded with
+    <a href="https://magland.github.io/arewehuman/" target="_blank" rel="noopener">arewehuman</a>
+    as evidence that a person typed this post rather than generating it with AI.
+  </p>
   <div class="replay-text" data-replay-text></div>
   <p class="replay-note">
     <span class="untyped">Highlighted</span> text was not typed.
     <span class="ghost">░░</span> marks text that was later deleted; its content was never recorded.
     Long pauses are shortened.
-    Recorded with <a href="https://magland.github.io/arewehuman/">arewehuman</a>.
   </p>
 </div>
 

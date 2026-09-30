@@ -525,28 +525,21 @@ body {
    raw Markdown types itself out in place of the formatted body, in the same
    font, so it reads as the post rather than as an embedded tool. */
 
-/* Invitation to watch the replay: a quiet card under the byline, set in the
-   UI font and theme colors so it belongs to the page in every theme. */
+/* Invitation to watch the replay. By default a quiet line under the byline,
+   in the UI font and theme colors, so it does not compete with the post.
+   Posts with replayProminent get a larger card (.replay-open-prominent). */
 .replay-open {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin: 1rem 0 0;
-  padding: 0.45rem 1.1rem 0.45rem 0.5rem;
+  display: block;
+  max-width: 100%;
+  margin: 0.5rem 0 0;
+  padding: 0;
   font-family: var(--font-ui);
+  font-size: 0.8125rem;
   text-align: left;
-  color: var(--text);
-  background: color-mix(in srgb, var(--link) 5%, var(--bg));
-  border: 1px solid color-mix(in srgb, var(--link) 22%, var(--border));
-  border-radius: 999px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.15s, background-color 0.15s;
-}
-
-.replay-open:hover,
-.replay-open:focus-visible {
-  border-color: var(--link);
-  background: color-mix(in srgb, var(--link) 9%, var(--bg));
 }
 
 .replay-open:disabled {
@@ -554,9 +547,61 @@ body {
 }
 
 .replay-open-icon {
-  flex: none;
   display: inline-grid;
   place-items: center;
+  margin-right: 0.3rem;
+  color: var(--link);
+}
+
+.replay-open-icon svg {
+  width: 10px;
+  height: 10px;
+}
+
+.replay-open-title {
+  color: var(--link);
+}
+
+.replay-open:hover .replay-open-title,
+.replay-open:focus-visible .replay-open-title {
+  text-decoration: underline;
+}
+
+.replay-open {
+  white-space: nowrap;
+}
+
+.replay-open-sub {
+  white-space: normal;
+}
+
+.replay-open-sub::before {
+  content: '·';
+  margin: 0 0.35rem 0 0;
+}
+
+.replay-open-prominent {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1rem 0 0;
+  padding: 0.45rem 1.1rem 0.45rem 0.5rem;
+  color: var(--text);
+  background: color-mix(in srgb, var(--link) 5%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--link) 22%, var(--border));
+  border-radius: 999px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.replay-open-prominent:hover,
+.replay-open-prominent:focus-visible {
+  border-color: var(--link);
+  background: color-mix(in srgb, var(--link) 9%, var(--bg));
+}
+
+.replay-open-prominent .replay-open-icon {
+  flex: none;
+  margin-right: 0;
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
@@ -564,14 +609,34 @@ body {
   background: var(--link);
 }
 
-.replay-open-icon svg {
+.replay-open-prominent .replay-open-icon svg {
+  width: 14px;
+  height: 14px;
   margin-left: 2px;
 }
 
-.replay-open-title {
+.replay-open-prominent .replay-open-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--link);
+}
+
+.replay-open-prominent:hover .replay-open-title {
+  text-decoration: none;
+}
+
+.replay-open-prominent .replay-open-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.replay-open-prominent .replay-open-sub::before {
+  content: none;
+}
+
+.replay-open-prominent,
+.replay-open-prominent .replay-open-sub {
+  white-space: normal;
 }
 
 .replay-bar button {
@@ -657,11 +722,19 @@ body {
   margin-right: -2px;
 }
 
+.replay-about,
 .replay-note {
-  margin: 1.5rem 0 0;
   font-family: var(--font-ui);
   font-size: 0.8125rem;
   color: var(--text-muted);
+}
+
+.replay-about {
+  margin: 0 0 1.25rem;
+}
+
+.replay-note {
+  margin: 1.5rem 0 0;
 }
 
 @media (max-width: 480px) {

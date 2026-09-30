@@ -7,6 +7,7 @@ authors:
 featured: true
 writtenByHuman: true
 provenance: /provenance/2026-09-29-are-we-human.prov.json
+replayProminent: true
 ---
 
 Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI? I would like you to know the truth, which is of course that I crafted this document myself. But how can I convince you? I suppose you could just trust me when I tell you. But I'm not satisfied with that. I worked hard on this, and I worked especially hard to resist the temptation to throw it into Claude or ChatGPT. And I want you to know the truth! I want you to hear my voice, and to know it is my voice.
