@@ -1,10 +1,6 @@
 ---
 title: Reading remote HDF5 files in the browser
-date: 2026-06-16
 summary: A self-contained demonstration of how a web application can lazy load data from remote HDF5 files, a core functionality of Neurosift.
-authors:
-  - Jeremy Magland
-featured: true
 writtenByHuman: true
 thumbnails:
   - https://concept-collection.github.io/remote-hdf5-lazy-read/

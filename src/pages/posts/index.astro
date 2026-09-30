@@ -1,11 +1,9 @@
 ---
-import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { formatDate } from '../../lib/site'
+import { getPosts } from '../../lib/posts'
 
-const posts = (await getCollection('posts')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-)
+const posts = await getPosts()
 ---
 
 <BaseLayout title="Posts" description="Posts by Jeremy Magland.">
@@ -16,11 +14,11 @@ const posts = (await getCollection('posts')).sort(
       {
         posts.map((post) => (
           <li>
-            <span class="post-date">{formatDate(post.data.date)}</span>
+            <span class="post-date">{formatDate(post.date)}</span>
             <div>
-              <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-              {post.data.summary && (
-                <p class="post-summary">{post.data.summary}</p>
+              <a href={`/posts/${post.id}/`}>{post.title}</a>
+              {post.summary && (
+                <p class="post-summary">{post.summary}</p>
               )}
             </div>
           </li>

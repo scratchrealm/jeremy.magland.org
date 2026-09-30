@@ -1,19 +1,17 @@
 ---
 // The most recent posts, for the home page: a light list of title + date,
-// with a link to the full listing at /posts. Only posts marked
-// `featured: true` in their frontmatter are candidates, and of those only the
-// `count` most recent are shown.
-import { getCollection } from 'astro:content'
+// with a link to the full listing at /posts. Only featured posts (the default;
+// `featured: false` in the frontmatter opts out) are candidates, and of those
+// only the `count` most recent are shown.
 import { formatDate } from '../lib/site'
+import { getPosts } from '../lib/posts'
 
 interface Props {
   count?: number
 }
 
 const { count = 3 } = Astro.props
-const posts = (await getCollection('posts', ({ data }) => data.featured))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, count)
+const posts = (await getPosts()).filter((p) => p.featured).slice(0, count)
 ---
 
 {
@@ -23,8 +21,8 @@ const posts = (await getCollection('posts', ({ data }) => data.featured))
       <ul>
         {posts.map((post) => (
           <li>
-            <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-            <span class="date">{formatDate(post.data.date)}</span>
+            <a href={`/posts/${post.id}/`}>{post.title}</a>
+            <span class="date">{formatDate(post.date)}</span>
           </li>
         ))}
       </ul>

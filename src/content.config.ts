@@ -12,26 +12,25 @@ const pages = defineCollection({
   }),
 })
 
-// Posts: dated writing, listed newest first at /posts.
+// Posts: dated writing, listed newest first at /posts. Every field is
+// optional; src/lib/posts.ts fills in the defaults (title from a leading "# "
+// line, date from the file name, and so on) and finds a post's recording.
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
   schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
+    title: z.string().optional(),
+    date: z.coerce.date().optional(),
     summary: z.string().optional(),
     authors: z.array(z.string()).optional(),
-    // Marks the post as a candidate for the home page list. The home page
-    // shows the most recent few candidates (see components/RecentPosts.astro);
-    // posts without this flag are still listed at /posts.
+    // Whether the post is a candidate for the home page list (default true).
+    // The home page shows the most recent few candidates (see
+    // components/RecentPosts.astro); every post is listed at /posts.
     featured: z.boolean().optional(),
     // Where the post first appeared, if it is a repost.
     originalUrl: z.string().url().optional(),
-    // Shows the "Written by Humans, Not by AI" badge (notbyai.fyi).
+    // Shows the "Written by Humans, Not by AI" badge (notbyai.fyi). Defaults
+    // to true for a post with a recording.
     writtenByHuman: z.boolean().optional(),
-    // Path (under public/) of an arewehuman provenance file (.prov.json) for
-    // this post. Adds a replay of the post being written. The post body must
-    // equal the text in the file; the build fails otherwise.
-    provenance: z.string().optional(),
     // Shows the invitation to watch the replay as a large card instead of a
     // quiet line under the byline.
     replayProminent: z.boolean().optional(),

@@ -186,11 +186,7 @@ if (postFile) {
   const body = [
     '---',
     `title: ${yaml(video?.title ?? slug)}`,
-    `date: ${today}`,
     `summary: ${yaml(video?.description)}`,
-    'authors:',
-    '  - Jeremy Magland',
-    'featured: true',
     '---',
     '',
     tag,

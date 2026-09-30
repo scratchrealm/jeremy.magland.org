@@ -14,27 +14,25 @@ npm run dev
 
 ## Content
 
-- **Pages** live in `src/content/pages/*.md` (or `.mdx` for pages that embed
-  components). Frontmatter: `title`, `order` (position in the nav),
-  `description` (meta description for search/link previews). `home.mdx` is
-  the front page; any other file `foo.md` is served at `/foo/`.
-- **Posts** live in `src/content/posts/*.md`. Frontmatter: `title`, `date`
-  (YYYY-MM-DD), optional `summary`, optional `featured`. Posts are listed at
-  `/posts`, newest first, and served at `/posts/<filename>/`. Setting
-  `featured: true` makes a post a candidate for the short list on the home
-  page, which shows the ten most recent candidates.
+- **Pages** live in `src/content/pages/*.md` (or `.mdx` for pages that embed components). Frontmatter: `title`, `order` (position in the nav), `description` (meta description for search/link previews). `home.mdx` is the front page; any other file `foo.md` is served at `/foo/`.
+- **Posts** live in `src/content/posts/`, one file `YYYY-MM-DD-<slug>.md` per post, served at `/posts/YYYY-MM-DD-<slug>/` and listed at `/posts` newest first.
+- **Drafts** that are not published live in `drafts/` (for example `drafts/ai-posts/`, posts drafted with AI).
 
-Adding a Markdown file is all that is needed — no code changes.
+A post needs no frontmatter. Its title is a leading `# ` line (which the page shows as the title rather than in the body), its date comes from the file name, and its summary is its first sentence. Frontmatter overrides these and sets the rest: `title`, `date`, `summary`, `authors` (default: Jeremy Magland), `featured` (default true; the home page lists the ten most recent featured posts), `originalUrl` (for a repost), `writtenByHuman` (the "Written by Humans" badge), `replayProminent`, and `thumbnails`. The schema is in `src/content.config.ts` and the defaults in `src/lib/posts.ts`.
 
-## Provenance posts
+## Recorded posts
 
-Posts written in [arewehuman](https://magland.github.io/arewehuman/) can be published together with their provenance file, which adds a "Watch this post being written" replay to the post page:
+A post can carry a recording of its writing, made with [arewehuman](https://github.com/magland/arewehuman): a file `YYYY-MM-DD-<slug>.prov.json` next to the post. The post page then offers a replay ("Watch this being written"), shows the "Written by Humans" badge, and serves the recording at `/provenance/YYYY-MM-DD-<slug>.prov.json`. The build fails if the post body (everything after the frontmatter) differs from the recorded text, since the replay would then not end in the text being shown.
+
+To write a recorded post in VS Code with the arewehuman extension, right-click `src/content/posts` and choose "New Recorded Document…", name it `YYYY-MM-DD-<slug>.md`, and start with a `# Title` line. Saving writes the `.prov.json` next to it. Frontmatter, if any, goes in the editor's frontmatter field and is not recorded. Reopening the post later opens it in the recording editor again, so edits stay in the recording.
+
+A post written in the arewehuman web app is added with
 
 ```bash
 npm run prov -- ~/Downloads/<name>.prov.json
 ```
 
-This copies the file to `public/provenance/<date>-<slug>.prov.json` and creates `src/content/posts/<date>-<slug>.md` with the `provenance` frontmatter field set. The title comes from a leading `# ` header line of the text (left out of the body, since the page shows it as the title), or else from the file's title. The build fails if the post body differs from the text in the provenance file, so edits must be made in arewehuman and re-exported. See `scripts/prov.mjs`.
+which writes the post (the recorded text) and copies the recording next to it. See `scripts/prov.mjs`.
 
 ## Videos
 
@@ -44,7 +42,7 @@ Video posts are screencasts recorded with [takes](https://vault1.magland.org/pro
 npm run video -- <name fragment of the takes folder>
 ```
 
-This uploads the MP4 and its thumbnail (used as the poster) under names that include a content hash, then either updates the `<video>` tag of the post that already embeds the video, or creates `src/content/posts/<today>-<slug>.md` with the title, description, and raw transcript from takes. Re-exporting and running it again gives a new URL, so cached copies never go stale. Any MP4 file also works as the argument, and `--slug NAME` overrides the name. See `scripts/video.mjs`. Uploads use wrangler, which must be logged in to the personal account.
+This uploads the MP4 and its thumbnail (used as the poster) under names that include a content hash, then either updates the `<video>` tag of the post that already embeds the video, or creates `src/content/posts/<today>-<slug>.md` with the title, summary, and raw transcript from takes. Re-exporting and running it again gives a new URL, so cached copies never go stale. Any MP4 file also works as the argument, and `--slug NAME` overrides the name. See `scripts/video.mjs`. Uploads use wrangler, which must be logged in to the personal account.
 
 ## Themes
 

@@ -1,13 +1,4 @@
----
-title: "Embracing the non-scalability"
-date: 2026-09-30
-summary: "Recently I've been writing software that doesn't scale, and embracing it!"
-authors:
-  - Jeremy Magland
-featured: true
-writtenByHuman: true
-provenance: /provenance/2026-09-30-embracing-the-non-scalability.prov.json
----
+# Embracing the non-scalability
 
 Recently I've been writing software that doesn't scale, and embracing it! Two recent projects, created with the help of AI coding assistants I should say, are Mochi (a GitHub replacement) and Dango (a Slack+Zoom replacement). These are super simple to spin up, use, and even deploy, but fail to scale to large numbers of users. But I'm realizing that's okay, because these are mainly personal tools to accelerate research for myself and a relatively small number of close collaborators. The expectation is that people not in my circle can just spin up their own github, slack, or zoom replacements for their own personal use. It's certainly easy enough. (And in fact maybe someday the different Mochi Vaults or Dango Workspace instances could talk to one another somehow).
 

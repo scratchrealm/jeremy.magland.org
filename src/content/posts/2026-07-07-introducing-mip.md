@@ -1,11 +1,9 @@
 ---
 title: Introducing mip
-date: 2026-07-07
 summary: We are excited to announce the release of version 1.0.0 of mip, a package manager for MATLAB.
 authors:
   - Jeremy Magland
   - Dan Fortunato
-featured: true
 originalUrl: https://mip.sh/blog/introducing-mip
 writtenByHuman: true
 thumbnails:

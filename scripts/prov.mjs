@@ -1,15 +1,15 @@
-// Create a post from an arewehuman provenance file (.prov.json).
+// Add a post from a provenance file exported by the arewehuman web app.
 //
 //   npm run prov -- ~/Downloads/some-post.prov.json
 //   npm run prov -- some-post.prov.json --slug other-name --date 2026-10-01
 //
-// The file is copied to public/provenance/<date>-<slug>.prov.json and a post
-// src/content/posts/<date>-<slug>.md is created with its text as the body, so
-// the post page offers a replay of the writing. The title is taken from a
-// leading "# " header line of the text, which is then left out of the body
-// (the page shows it as the title), or else from the file's title field. The
-// date defaults to the day the document was created, the slug to the title,
-// and the summary to the first sentence. Existing files are not overwritten.
+// Creates src/content/posts/<date>-<slug>.md containing the recorded text, and
+// copies the file next to it as <date>-<slug>.prov.json. The date defaults to
+// the day the document was created and the slug to the title, which comes from
+// a leading "# " line of the text or else from the file's title field (in which
+// case it is written to the post's frontmatter). Existing files are not
+// overwritten. Posts written in VS Code with the arewehuman extension need none
+// of this: they are recorded in place.
 
 import { readFile, writeFile, copyFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -37,14 +37,9 @@ if (!existsSync(src)) fail(`${src} not found`)
 const prov = JSON.parse(await readFile(src, 'utf8'))
 if (prov.format !== 'arewehuman') fail(`${src} is not an arewehuman provenance file`)
 
-let body = prov.text.trim()
-let title = prov.title && prov.title !== 'Untitled' ? prov.title : null
-const header = body.match(/^# (.*)\n/)
-if (header) {
-  title = header[1].trim()
-  body = body.slice(header[0].length).trim()
-}
-if (!title) fail('no title: the text has no leading "# " header and the file has no title')
+const heading = prov.text.match(/^\s*# (.+)/)?.[1].trim()
+const title = heading ?? (prov.title && prov.title !== 'Untitled' ? prov.title : null)
+if (!title) fail('no title: the text has no leading "# " line and the file has no title')
 
 const date = opt('--date') ?? new Date(prov.created ?? prov.t0).toISOString().slice(0, 10)
 const slug =
@@ -55,30 +50,13 @@ const slug =
     .replace(/^-|-$/g, '')
 const name = `${date}-${slug}`
 
-// First sentence of the first paragraph, without Markdown links.
-const summary = body
-  .split(/\n\s*\n/)[0]
-  .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-  .match(/^.*?[.!?](?=\s|$)/)?.[0]
+const dir = path.join(root, 'src/content/posts')
+const postPath = path.join(dir, `${name}.md`)
+const provPath = path.join(dir, `${name}.prov.json`)
+for (const p of [postPath, provPath]) if (existsSync(p)) fail(`${path.relative(root, p)} already exists`)
 
-const provPath = path.join(root, 'public/provenance', `${name}.prov.json`)
-const postPath = path.join(root, 'src/content/posts', `${name}.md`)
-for (const p of [provPath, postPath]) if (existsSync(p)) fail(`${path.relative(root, p)} already exists`)
-
-const yaml = (s) => JSON.stringify(s)
-const front = [
-  '---',
-  `title: ${yaml(title)}`,
-  `date: ${date}`,
-  ...(summary ? [`summary: ${yaml(summary)}`] : []),
-  'authors:',
-  '  - Jeremy Magland',
-  'featured: true',
-  'writtenByHuman: true',
-  `provenance: /provenance/${name}.prov.json`,
-  '---',
-]
+const front = heading ? '' : `---\ntitle: ${JSON.stringify(title)}\n---\n\n`
 await copyFile(src, provPath)
-await writeFile(postPath, `${front.join('\n')}\n\n${body}\n`)
+await writeFile(postPath, front + prov.text)
 console.log(`created ${path.relative(root, postPath)}`)
 console.log(`created ${path.relative(root, provPath)}`)

@@ -1,12 +1,6 @@
 ---
 title: Are we human?
-date: 2026-09-29
 summary: Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI?
-authors:
-  - Jeremy Magland
-featured: true
-writtenByHuman: true
-provenance: /provenance/2026-09-29-are-we-human.prov.json
 replayProminent: true
 ---
 

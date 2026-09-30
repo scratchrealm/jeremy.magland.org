@@ -1,20 +1,18 @@
 import rss from '@astrojs/rss'
-import { getCollection } from 'astro:content'
 import type { APIContext } from 'astro'
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/site'
+import { getPosts } from '../lib/posts'
 
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('posts')).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  )
+  const posts = await getPosts()
   return rss({
     title: `${SITE_TITLE} — Posts`,
     description: SITE_DESCRIPTION,
     site: context.site!,
     items: posts.map((post) => ({
-      title: post.data.title,
-      description: post.data.summary,
-      pubDate: post.data.date,
+      title: post.title,
+      description: post.summary,
+      pubDate: post.date,
       link: `/posts/${post.id}/`,
     })),
   })

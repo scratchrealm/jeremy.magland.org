@@ -1,40 +1,27 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PostThumbnails from '../../components/PostThumbnails.astro'
 import ProvenanceReplay from '../../components/ProvenanceReplay.astro'
 import Comments from '../../components/Comments.astro'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { formatDate, formatAuthors } from '../../lib/site'
+import { getPosts, type Post } from '../../lib/posts'
 import HumanBadgeLight from '../../assets/not-by-ai/written-by-humans-white.svg'
 import HumanBadgeDark from '../../assets/not-by-ai/written-by-humans-black.svg'
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts')
+  const posts = await getPosts()
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
   }))
 }
 
-const { post } = Astro.props
-const { Content } = await render(post)
+const { post } = Astro.props as { post: Post }
+const { Content } = await render(post.entry)
 
-const { authors, originalUrl, writtenByHuman, thumbnails, provenance, replayProminent } = post.data
-
-// A replay is only honest if it ends in exactly the text being shown, so an
-// edit to the post that is not in its provenance file fails the build. A
-// leading "# <title>" line in the provenance text is shown as the post title
-// rather than in the body, so it is not expected in the body.
-if (provenance) {
-  const prov = JSON.parse(readFileSync(join(process.cwd(), 'public', provenance), 'utf8'))
-  let expected = prov.text.trim()
-  const header = expected.match(/^# (.*)\n/)
-  if (header && header[1].trim() === post.data.title) expected = expected.slice(header[0].length).trim()
-  if ((post.body ?? '').trim() !== expected)
-    throw new Error(`Post ${post.id} differs from the text in its provenance file ${provenance}`)
-}
+const { title, summary, date, authors, writtenByHuman, provenance } = post
+const { originalUrl, thumbnails, replayProminent } = post.entry.data
 // Label the repost link with the source host, e.g. "mip.sh".
 const originalHost = originalUrl
   ? new URL(originalUrl).hostname.replace(/^www\./, '')
@@ -42,16 +29,16 @@ const originalHost = originalUrl
 ---
 
 <BaseLayout
-  title={post.data.title}
-  description={post.data.summary}
+  title={title}
+  description={summary}
   ogType="article"
 >
   <article class="prose">
     <header class="post-header">
-      <h1>{post.data.title}</h1>
+      <h1>{title}</h1>
       <p class="post-meta">
-        {authors && authors.length > 0 && <span>{formatAuthors(authors)} · </span>}
-        {formatDate(post.data.date)}
+        {authors.length > 0 && <span>{formatAuthors(authors)} · </span>}
+        {formatDate(date)}
       </p>
       {
         originalUrl && (
@@ -81,7 +68,7 @@ const originalHost = originalUrl
     <div data-post-body>
       <Content />
     </div>
-    {provenance && <ProvenanceReplay src={provenance} />}
+    {provenance && <ProvenanceReplay src={provenance.url} />}
     {thumbnails && thumbnails.length > 0 && <PostThumbnails urls={thumbnails} />}
     {
       writtenByHuman && (
@@ -100,7 +87,7 @@ const originalHost = originalUrl
         </footer>
       )
     }
-    <Comments threadId={`/posts/${post.id}/`} title={post.data.title} />
+    <Comments threadId={`/posts/${post.id}/`} title={title} />
     <p><a href="/posts/">← All posts</a></p>
   </article>
 </BaseLayout>
