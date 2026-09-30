@@ -12,7 +12,7 @@ const { src } = Astro.props
 
 <div class="replay" data-replay data-src={src} hidden>
   <div class="replay-bar">
-    <button type="button" class="replay-play" data-replay-play>Pause</button>
+    <button type="button" class="replay-play" data-replay-play>❚❚ Pause</button>
     <input type="range" class="replay-seek" data-replay-seek min="0" max="1" step="any" value="0" aria-label="Replay position" />
     <span class="replay-clock" data-replay-clock></span>
     <select class="replay-speed" data-replay-speed aria-label="Replay speed">
@@ -24,12 +24,12 @@ const { src } = Astro.props
       <option value="x2">Typing pace ×2</option>
       <option value="x1">Typing pace</option>
     </select>
-    <button type="button" class="replay-close" data-replay-close aria-label="Close replay">Close</button>
+    <button type="button" class="replay-close" data-replay-close>Back to the post</button>
   </div>
   <div class="replay-text" data-replay-text></div>
   <p class="replay-note">
-    <span class="pasted">Highlighted</span> text was pasted rather than typed.
-    <span class="ghost">░░</span> marks text that was later deleted. Its content was never recorded.
+    <span class="untyped">Highlighted</span> text was not typed.
+    <span class="ghost">░░</span> marks text that was later deleted; its content was never recorded.
     Long pauses are shortened.
     Recorded with <a href="https://magland.github.io/arewehuman/">arewehuman</a>.
   </p>
@@ -38,16 +38,15 @@ const { src } = Astro.props
 <script>
   import { Timeline, type ProvDoc, type Run } from '../lib/provenance'
 
-  // Replay timing. For Fast/Normal/Slow, gaps up to PAUSE_MS are typing
-  // rhythm and keep their proportions, sped up so that all typing takes
-  // `typing` seconds. A longer pause also gets a visible beat that grows with
-  // the log of its length (`beat` ms per factor of e), so a five-minute pause
-  // reads as a real stop without taking five minutes. At Normal, 10 s shows as
-  // about 0.5 s, 1 min as 1.3 s, and 5 min as 2 s.
-  // The typing-pace speeds use the recorded timing with each gap capped at
-  // MAX_PAUSE_MS, played `mult` times faster.
+  // Replay timing, identical to the player in arewehuman (src/viewer/Replay.tsx).
+  // For Fast/Normal/Slow, gaps up to PAUSE_MS are typing rhythm and keep their
+  // proportions, sped up so that all typing takes `typing` seconds (or real
+  // pace, if that is faster). A longer pause gets a beat that grows with the
+  // log of its length (`beat` ms per factor of e). The typing-pace speeds use
+  // the recorded timing played `mult` times faster. At every speed no pause is
+  // shown for longer than MAX_SHOWN_MS.
   const PAUSE_MS = 3000
-  const MAX_PAUSE_MS = 5000
+  const MAX_SHOWN_MS = 1000
   type Speed = { typing: number; beat: number } | { mult: number }
   const SPEEDS: Record<string, Speed> = {
     fast: { typing: 30, beat: 200 },
@@ -84,8 +83,10 @@ const { src } = Astro.props
 
     async function load() {
       if (tl) return
+      const label = opener.querySelector<HTMLElement>('[data-replay-open-label]') ?? opener
+      const text = label.textContent
       opener.disabled = true
-      opener.textContent = 'Loading…'
+      label.textContent = 'Loading…'
       try {
         const doc: ProvDoc = await (await fetch(panel.dataset.src!)).json()
         tl = new Timeline(doc)
@@ -93,7 +94,7 @@ const { src } = Astro.props
         timing()
       } finally {
         opener.disabled = false
-        opener.textContent = 'Watch this post being written'
+        label.textContent = text
       }
     }
 
@@ -101,18 +102,16 @@ const { src } = Astro.props
     function timing() {
       const sp = SPEEDS[speed.value] ?? SPEEDS.normal
       const gap = (i: number) => events[i][1] - events[i - 1][1]
-      ct = new Float64Array(events.length)
-      if ('mult' in sp) {
-        for (let i = 1; i < events.length; i++) ct[i] = ct[i - 1] + Math.min(gap(i), MAX_PAUSE_MS) / sp.mult
-      } else {
+      let shown: (g: number) => number
+      if ('mult' in sp) shown = (g) => g / sp.mult
+      else {
         let rhythm = 0
         for (let i = 1; i < events.length; i++) rhythm += Math.min(gap(i), PAUSE_MS)
-        const scale = rhythm ? (sp.typing * 1000) / rhythm : 1
-        for (let i = 1; i < events.length; i++) {
-          const g = gap(i)
-          ct[i] = ct[i - 1] + scale * Math.min(g, PAUSE_MS) + (g > PAUSE_MS ? sp.beat * Math.log(g / PAUSE_MS) : 0)
-        }
+        const scale = rhythm ? Math.min(1, (sp.typing * 1000) / rhythm) : 1
+        shown = (g) => scale * Math.min(g, PAUSE_MS) + (g > PAUSE_MS ? sp.beat * Math.log(g / PAUSE_MS) : 0)
       }
+      ct = new Float64Array(events.length)
+      for (let i = 1; i < events.length; i++) ct[i] = ct[i - 1] + Math.min(shown(gap(i)), MAX_SHOWN_MS)
       total = events.length ? ct[events.length - 1] : 0
       seek.max = String(Math.ceil(total))
     }
@@ -131,7 +130,10 @@ const { src } = Astro.props
 
     const fmt = (ms: number) => {
       const s = Math.floor(ms / 1000)
-      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+      const h = Math.floor(s / 3600)
+      const m = Math.floor((s % 3600) / 60)
+      const ss = String(s % 60).padStart(2, '0')
+      return h ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`
     }
 
     function render(follow: boolean) {
@@ -146,9 +148,9 @@ const { src } = Astro.props
       let offset = 0
       const add = (s: string, r: Run) => {
         if (!s) return
-        if (r.ghost || r.pasted) {
+        if (r.ghost || r.untyped) {
           const g = document.createElement('span')
-          g.className = [r.ghost && 'ghost', r.pasted && 'pasted'].filter(Boolean).join(' ')
+          g.className = [r.ghost && 'ghost', r.untyped && 'untyped'].filter(Boolean).join(' ')
           g.textContent = s
           textEl.append(g)
         } else textEl.append(s)
@@ -175,9 +177,11 @@ const { src } = Astro.props
       }
     }
 
+    const label = () => (playing ? '❚❚ Pause' : pos >= total ? '↺ Replay' : '▶ Play')
+
     function setPlaying(p: boolean) {
       playing = p
-      playBtn.textContent = playing ? 'Pause' : pos >= total ? 'Replay' : 'Play'
+      playBtn.textContent = label()
       cancelAnimationFrame(raf)
       if (!playing) return
       let last = performance.now()
@@ -212,7 +216,7 @@ const { src } = Astro.props
       if (playing) setPlaying(false)
       pos = Math.min(total, Number(seek.value))
       render(false)
-      playBtn.textContent = pos >= total ? 'Replay' : 'Play'
+      playBtn.textContent = label()
     })
 
     // Keep the same point in the writing when the speed changes.

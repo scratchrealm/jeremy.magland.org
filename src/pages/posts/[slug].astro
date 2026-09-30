@@ -56,11 +56,12 @@ const originalHost = originalUrl
       }
       {
         provenance && (
-          <p class="post-replay">
-            <button type="button" class="replay-open" data-replay-open>
-              Watch this post being written
-            </button>
-          </p>
+          <button type="button" class="replay-open" data-replay-open>
+            <span class="replay-open-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>
+            </span>
+            <span class="replay-open-title" data-replay-open-label>Watch this being written</span>
+          </button>
         )
       }
     </header>

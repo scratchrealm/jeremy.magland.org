@@ -525,11 +525,55 @@ body {
    raw Markdown types itself out in place of the formatted body, in the same
    font, so it reads as the post rather than as an embedded tool. */
 
-.post-replay {
-  margin: 0.25rem 0 0;
+/* Invitation to watch the replay: a quiet card under the byline, set in the
+   UI font and theme colors so it belongs to the page in every theme. */
+.replay-open {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1rem 0 0;
+  padding: 0.45rem 1.1rem 0.45rem 0.5rem;
+  font-family: var(--font-ui);
+  text-align: left;
+  color: var(--text);
+  background: color-mix(in srgb, var(--link) 5%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--link) 22%, var(--border));
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
 }
 
-.replay-open,
+.replay-open:hover,
+.replay-open:focus-visible {
+  border-color: var(--link);
+  background: color-mix(in srgb, var(--link) 9%, var(--bg));
+}
+
+.replay-open:disabled {
+  cursor: progress;
+}
+
+.replay-open-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  color: var(--bg);
+  background: var(--link);
+}
+
+.replay-open-icon svg {
+  margin-left: 2px;
+}
+
+.replay-open-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--link);
+}
+
 .replay-bar button {
   font-family: var(--font-ui);
   font-size: 0.8125rem;
@@ -540,7 +584,6 @@ body {
   cursor: pointer;
 }
 
-.replay-open:hover,
 .replay-bar button:hover {
   text-decoration: underline;
 }
@@ -562,7 +605,7 @@ body {
 }
 
 .replay-bar .replay-play {
-  min-width: 3.2rem;
+  min-width: 4.6rem;
   text-align: left;
 }
 
@@ -598,7 +641,7 @@ body {
   letter-spacing: -0.05em;
 }
 
-.replay .pasted {
+.replay .untyped {
   background: color-mix(in srgb, var(--link) 20%, transparent);
   border-radius: 2px;
   box-decoration-break: clone;

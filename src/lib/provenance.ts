@@ -15,6 +15,8 @@ export interface ProvDoc {
   events: Ev[]
 }
 
+const UNTYPED = new Set(['p', 'x', 'o'])
+
 function decodeRanges(r: number[]): number[] {
   const ids: number[] = []
   for (let k = 0; k + 1 < r.length; k += 2)
@@ -30,7 +32,7 @@ interface State {
 export interface Run {
   text: string
   ghost: boolean // later deleted; text is placeholders
-  pasted: boolean
+  untyped: boolean // pasted, imported, or inserted without a keystroke
 }
 
 function apply(st: State, ev: Ev) {
@@ -60,13 +62,14 @@ function caretAfter(ev: Ev | undefined): number {
 export class Timeline {
   private snaps: { k: number; live: number[]; next: number }[] = []
   private finalIndex = new Map<number, number>() // id -> index in final text
-  private pasted: boolean[] = [] // by id
+  private untyped: boolean[] = [] // by id
 
   constructor(readonly doc: ProvDoc) {
     const st: State = { live: [], next: 0 }
     this.snaps.push({ k: 0, live: [], next: 0 })
     doc.events.forEach((ev, i) => {
-      if (ev[0] === 'i') for (let j = 0; j < (ev[3] as number); j++) this.pasted.push(ev[4] === 'p')
+      // Copies within the document ("c") count as typed, as in arewehuman.
+      if (ev[0] === 'i') for (let j = 0; j < (ev[3] as number); j++) this.untyped.push(UNTYPED.has(ev[4] as string))
       apply(st, ev)
       if ((i + 1) % 500 === 0) this.snaps.push({ k: i + 1, live: st.live.slice(), next: st.next })
     })
@@ -85,11 +88,11 @@ export class Timeline {
     for (const id of st.live) {
       const fi = this.finalIndex.get(id)
       const ghost = fi === undefined
-      const pasted = this.pasted[id]
+      const untyped = this.untyped[id]
       const ch = ghost ? '░' : this.doc.text[fi]
       const last = runs[runs.length - 1]
-      if (last && last.ghost === ghost && last.pasted === pasted) last.text += ch
-      else runs.push({ text: ch, ghost, pasted })
+      if (last && last.ghost === ghost && last.untyped === untyped) last.text += ch
+      else runs.push({ text: ch, ghost, untyped })
     }
     return { runs, caret: caretAfter(this.doc.events[k - 1]) }
   }
