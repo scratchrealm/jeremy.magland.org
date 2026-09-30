@@ -22,7 +22,7 @@ npm run dev
   (YYYY-MM-DD), optional `summary`, optional `featured`. Posts are listed at
   `/posts`, newest first, and served at `/posts/<filename>/`. Setting
   `featured: true` makes a post a candidate for the short list on the home
-  page, which shows the five most recent candidates.
+  page, which shows the ten most recent candidates.
 
 Adding a Markdown file is all that is needed — no code changes.
 
