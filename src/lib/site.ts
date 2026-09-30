@@ -9,6 +9,11 @@ export const SITE_DESCRIPTION =
 // disable analytics entirely. Only loaded in production builds.
 export const GOATCOUNTER_CODE = 'jeremy-magland'
 
+// Isso comment server (comments-server/ in this repo), which serves both the
+// embed script and the comment API. Set to '' to remove comments from posts.
+// Only loaded in production builds.
+export const ISSO_URL = 'https://jeremy-comments.magland.org'
+
 export function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',

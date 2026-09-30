@@ -1,0 +1,54 @@
+---
+import { ISSO_URL } from '../lib/site'
+
+interface Props {
+  /** Thread id on the comment server, e.g. /posts/<slug>/ */
+  threadId: string
+  /** Thread title shown in the moderation UI */
+  title: string
+}
+const { threadId, title } = Astro.props
+---
+
+{
+  ISSO_URL && (
+    <section class="comments" aria-labelledby="comments-heading">
+      <h2 id="comments-heading">Comments</h2>
+      <p class="comments-note">Comments are anonymous and appear once approved.</p>
+      {
+        import.meta.env.PROD ? (
+          <>
+            {/* Styles for the widget are in global.css (.comments). The
+                name, email, and website fields are hidden there, since the
+                server does not require them. While the thread is empty
+                (e.g. the server is waking from auto-stop) the CSS shows a
+                loading message; data-failed switches it to an error, which
+                disappears anyway if Isso fills the thread later. */}
+            <section id="isso-thread" data-isso-id={threadId} data-title={title} />
+            <script is:inline>
+              setTimeout(function () {
+                var t = document.getElementById('isso-thread')
+                if (t && !t.hasChildNodes()) t.setAttribute('data-failed', '')
+              }, 20000)
+            </script>
+            <script
+              is:inline
+              async
+              onerror="document.getElementById('isso-thread').setAttribute('data-failed', '')"
+              src={`${ISSO_URL}/js/embed.min.js`}
+              data-isso={ISSO_URL}
+              data-isso-lang="en"
+              data-isso-vote="false"
+              data-isso-avatar="false"
+              data-isso-postbox-text-text-en="Leave a comment"
+            />
+          </>
+        ) : (
+          <p class="comments-placeholder">
+            Comments load from {new URL(ISSO_URL).host} in production builds.
+          </p>
+        )
+      }
+    </section>
+  )
+}

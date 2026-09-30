@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PostThumbnails from '../../components/PostThumbnails.astro'
 import ProvenanceReplay from '../../components/ProvenanceReplay.astro'
+import Comments from '../../components/Comments.astro'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { formatDate, formatAuthors } from '../../lib/site'
@@ -99,6 +100,7 @@ const originalHost = originalUrl
         </footer>
       )
     }
+    <Comments threadId={`/posts/${post.id}/`} title={post.data.title} />
     <p><a href="/posts/">← All posts</a></p>
   </article>
 </BaseLayout>

@@ -2,8 +2,8 @@
 
 Personal website, built with [Astro](https://astro.build). Content is written
 in Markdown and pre-rendered to static HTML at build time (fast, SEO-friendly;
-the only client-side JavaScript is the tiny theme switcher and the analytics
-counter).
+the only client-side JavaScript is the tiny theme switcher, the analytics
+counter, and the comment widget on posts).
 
 ## Development
 
@@ -77,6 +77,12 @@ cookies, no personal data, ~3.5 KB of JavaScript. The script is emitted from
 `npm run preview` of a dev build do not pollute the stats. The account is set
 by `GOATCOUNTER_CODE` in `src/lib/site.ts`; set it to `''` to turn analytics
 off. Stats live at https://jeremy-magland.goatcounter.com.
+
+## Comments
+
+Posts have anonymous comments, served by a self-hosted [Isso](https://isso-comments.de) server at https://jeremy-comments.magland.org (Fly.io app `jeremy-comments`, with a SQLite database on a Fly volume). The server lives in `comments-server/`, which is not part of the Astro build or the Pages deploy; its README has the one-time deploy steps and the Cloudflare DNS record. `src/components/Comments.astro` embeds the widget above the "All posts" link on each post page, in production builds only (dev shows a placeholder), keyed by the thread id `/posts/<slug>/`. Voting is off, and the name, email, and website fields and the reply-notification checkbox are hidden, so every comment is shown as "Anonymous". The widget's styles are in the Comments section of `src/styles/global.css`, which maps Isso's color variables to the theme variables. The server is set by `ISSO_URL` in `src/lib/site.ts`; set it to `''` to remove comments.
+
+Every comment is held for moderation and becomes visible only after approval at https://jeremy-comments.magland.org/admin (password in the Fly secret `ISSO_ADMIN_PASSWORD`). Unapproved comments are deleted after 30 days. There are no email notifications; new comments show up in the admin queue and in `fly logs`. Note that hiding the fields is only a client-side measure: a hand-made request to the API can still include a name or website, which moderation would catch.
 
 ## Deployment
 

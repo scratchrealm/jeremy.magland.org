@@ -747,3 +747,218 @@ body {
     flex-basis: 100%;
   }
 }
+
+/* Comments (components/Comments.astro). The widget is built by Isso's embed
+   script, whose stylesheet loads after this one and defines its colors as
+   --isso-* variables on :root. Redefining those variables on #isso-thread in
+   terms of the theme variables makes the widget follow every theme, and the
+   rules below are prefixed with #isso-thread so that they win over Isso's
+   own. Comments are anonymous, so the name, email, and website fields and the
+   reply-notification checkbox are hidden. */
+
+.comments {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.prose .comments h2 {
+  margin: 0 0 0.25rem;
+}
+
+.prose .comments-note,
+.prose .comments-placeholder {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.prose .comments-note {
+  margin: 0 0 1rem;
+}
+
+.prose .comments-placeholder,
+#isso-thread:empty::before {
+  display: block;
+  margin: 0 0 1rem;
+  padding: 1.5rem 1rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+/* Shown until Isso inserts the form, which after an idle period waits for
+   the comment server to start. */
+#isso-thread:empty::before {
+  content: 'Loading comments…';
+  animation: comments-loading 1.6s ease-in-out infinite;
+}
+
+#isso-thread[data-failed]:empty::before {
+  content: 'Comments could not be loaded right now.';
+  animation: none;
+}
+
+@keyframes comments-loading {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #isso-thread:empty::before {
+    animation: none;
+  }
+}
+
+#isso-thread {
+  --isso-primary-text-color: var(--text);
+  --isso-secondary-text-color: var(--text-muted);
+  --isso-border: 1px solid var(--border);
+  --isso-box-shadow-color: transparent;
+  --isso-hover-color: var(--link);
+  --isso-link-hover-color: var(--link);
+  --isso-link-text-shadow-color: transparent;
+  --isso-input-background-color: var(--bg);
+  --isso-input-outline-color: var(--link);
+  --isso-button-background-color: var(--bg-code);
+  --isso-button-border: 1px solid var(--border);
+  --isso-button-hover-background-color: color-mix(in srgb, var(--link) 12%, var(--bg-code));
+  --isso-button-active-background-color: color-mix(in srgb, var(--link) 20%, var(--bg-code));
+  --isso-preview-border-color: var(--border);
+  --isso-preview-box-shadow-color: transparent;
+  --isso-preview-background: var(--bg-code);
+  --isso-pre-color: var(--text);
+  --isso-pre-background-color: var(--bg-code);
+  --isso-pre-border-color: var(--border);
+  --isso-comment-divider-color: var(--border);
+  --isso-page-author-suffix-color: var(--link);
+  --isso-target-fade-background-color: color-mix(in srgb, var(--link) 18%, transparent);
+  color: var(--text);
+}
+
+/* The section heading already says "Comments"; Isso's count heading would
+   repeat it. */
+#isso-thread .isso-thread-heading,
+#isso-thread .isso-auth-section .isso-input-wrapper,
+#isso-thread .isso-notification-section {
+  display: none !important;
+}
+
+#isso-thread .isso-postbox {
+  margin: 0 0 1.5rem;
+}
+
+#isso-thread .isso-textarea,
+#isso-thread .isso-preview {
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  border-radius: 4px;
+}
+
+#isso-thread .isso-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+#isso-thread .isso-textarea:focus {
+  outline: 2px solid var(--link);
+  outline-offset: -1px;
+}
+
+/* Only the buttons remain in the auth section; keep them floated right as
+   in Isso's layout and contain the floats. */
+#isso-thread .isso-auth-section {
+  display: flow-root;
+}
+
+#isso-thread .isso-post-action {
+  margin: 0;
+}
+
+#isso-thread .isso-post-action > input {
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text);
+  border-radius: 4px;
+}
+
+#isso-thread .isso-post-action > input[type='submit'] {
+  color: var(--bg);
+  background: var(--link);
+  border-color: var(--link);
+}
+
+#isso-thread .isso-post-action > input[type='submit']:hover {
+  background: color-mix(in srgb, var(--link) 85%, var(--text));
+}
+
+/* Comments. With avatars off, align them with the text box rather than
+   Isso's avatar gutter. */
+#isso-thread .isso-comment {
+  max-width: none;
+}
+
+#isso-thread .isso-text-wrapper {
+  padding: 0.9rem 0 0.6rem;
+}
+
+#isso-thread .isso-follow-up {
+  padding-left: 1.25rem;
+}
+
+#isso-thread .isso-comment-header,
+#isso-thread .isso-comment-footer {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+#isso-thread .isso-author {
+  font-weight: 600;
+  color: var(--text);
+}
+
+#isso-thread .isso-text {
+  margin: 0.35rem 0;
+}
+
+#isso-thread .isso-text pre,
+#isso-thread .isso-text code {
+  font-family: var(--font-mono);
+}
+
+#isso-thread .isso-comment-header a,
+#isso-thread .isso-comment-footer a {
+  font-weight: normal;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+#isso-thread .isso-comment-header a:hover,
+#isso-thread .isso-comment-footer a:hover {
+  color: var(--link);
+  text-shadow: none;
+}
+
+#isso-thread .isso-comment-footer > a {
+  top: 0;
+}
+
+/* "Comment in queue for moderation" floats right; on a phone it collides
+   with the comment text, so give it its own line. */
+@media (max-width: 480px) {
+  #isso-thread .isso-note {
+    float: none;
+    display: block;
+  }
+}
