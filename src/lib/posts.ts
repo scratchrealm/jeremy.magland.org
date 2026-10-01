@@ -13,6 +13,7 @@
 // body must be exactly the recorded text, or the build fails.
 import { getCollection, type CollectionEntry } from 'astro:content'
 import { existsSync, readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { parseRecording } from './provenance'
 
 export const AUTHOR = 'Jeremy Magland'
@@ -72,10 +73,29 @@ function toPost(entry: CollectionEntry<'posts'>): Post {
   }
 }
 
+// When a post was first committed, in seconds, to order posts of the same date;
+// Infinity if it is not committed yet. Needs the full git history (see
+// fetch-depth in .github/workflows/deploy.yml).
+function firstCommitted(post: Post): number {
+  const file = post.entry.filePath
+  if (!file) return Infinity
+  try {
+    const times = execFileSync('git', ['log', '--follow', '--format=%ct', '--', file], { encoding: 'utf8' }).trim()
+    return times ? Number(times.split('\n').pop()) : Infinity
+  } catch {
+    return Infinity
+  }
+}
+
 let cache: Promise<Post[]> | undefined
 
-// All posts, newest first.
+// All posts, newest first. Posts of the same date are in the order they were
+// first committed, newest first.
 export function getPosts(): Promise<Post[]> {
-  cache ??= getCollection('posts').then((all) => all.map(toPost).sort((a, b) => b.date.valueOf() - a.date.valueOf()))
+  cache ??= getCollection('posts').then((all) => {
+    const posts = all.map(toPost)
+    const committed = new Map(posts.map((p) => [p, firstCommitted(p)]))
+    return posts.sort((a, b) => b.date.valueOf() - a.date.valueOf() || committed.get(b)! - committed.get(a)!)
+  })
   return cache
 }

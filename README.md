@@ -18,7 +18,7 @@ npm run dev
 - **Posts** live in `src/content/posts/`, one file `YYYY-MM-DD-<slug>.md` per post, served at `/posts/YYYY-MM-DD-<slug>/` and listed at `/posts` newest first.
 - **Drafts** that are not published live in `drafts/` (for example `drafts/ai-posts/`, posts drafted with AI).
 
-A post needs no frontmatter. Its title is a leading `# ` line (which the page shows as the title rather than in the body), its date comes from the file name, and its summary is its first sentence. Frontmatter overrides these and sets the rest: `title`, `date`, `summary`, `authors` (default: Jeremy Magland), `featured` (default true; the home page lists the ten most recent featured posts), `originalUrl` (for a repost), `writtenByHuman` (the "Written by Humans" badge), `replayProminent`, and `thumbnails`. The schema is in `src/content.config.ts` and the defaults in `src/lib/posts.ts`.
+A post needs no frontmatter. Its title is a leading `# ` line (which the page shows as the title rather than in the body), its date comes from the file name, and its summary is its first sentence. Posts with the same date are listed in the order they were first committed, newest first. Frontmatter overrides these and sets the rest: `title`, `date`, `summary`, `authors` (default: Jeremy Magland), `featured` (default true; the home page lists the ten most recent featured posts), `originalUrl` (for a repost), `writtenByHuman` (the "Written by Humans" badge), `replayProminent`, and `thumbnails`. The schema is in `src/content.config.ts` and the defaults in `src/lib/posts.ts`.
 
 ## Recorded posts
 
