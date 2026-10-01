@@ -6,7 +6,7 @@ featured: false
 
 <video controls playsinline preload="metadata" poster="https://media.magland.org/videos/are-we-human-git-collaboration-0a04a25f9eaa.jpg" style="width: 100%;" src="https://media.magland.org/videos/are-we-human-git-collaboration-2e2d1e4b57e8.mp4"></video>
 
-This is a follow-up to [Are we human file format v2](/posts/2026-10-01-are-we-human-file-format-v2/).
+This is a follow-up to [Are we human file format v2](/posts/2026-10-01-are-we-human-file-format-v2/). The arewehuman app itself was introduced in [Are we human?](/posts/2026-09-29-are-we-human/).
 
 Source: [magland/arewehuman](https://github.com/magland/arewehuman) · Docs: [Where recordings are kept](https://github.com/magland/arewehuman/blob/main/vscode/README.md#where-recordings-are-kept)
 

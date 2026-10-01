@@ -54,6 +54,8 @@ Now I'm going to try something that I thought the system might not be able to ha
 
 ### Collaborating with git
 
+*Note: the ideas in this section are superseded by the next video, [Are we human git collaboration](/posts/2026-10-01-are-we-human-git-collaboration/), which shows how collaboration works now.*
+
 Now I want to talk a little bit about collaboration. Let's say I'm collaborating on a project, like writing a paper, and I make edits to my file, and I've got my arewehuman sidecar file. I believe the thing to do is to commit and push these sidecar files into the repo. This works okay if I edit, then my collaborator edits and pushes, and I pull, so that we edit sequentially, because then we're always extending the same arewehuman file.
 
 The problem comes if we both make edits and then need to merge. For merging the Markdown there are a lot of established processes, and automatic merging works. The problem is how to merge these JSON files, because that gets complicated. I'm not sure exactly how to solve that, but here is one idea.
