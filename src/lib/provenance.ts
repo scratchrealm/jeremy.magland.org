@@ -50,11 +50,14 @@ export interface Run {
   untyped: boolean // pasted, imported, or inserted without a keystroke
 }
 
+// The number of characters an insert ("i") or a move from another file ("k") adds.
+const inserted = (ev: Ev) => (ev[0] === 'i' ? (ev[3] as number) : ev[0] === 'k' ? decodeRanges(ev[4] as number[]).length : 0)
+
 function apply(st: State, ev: Ev) {
-  if (ev[0] === 'i') {
-    const [, , pos, n] = ev as [string, number, number, number]
+  if (ev[0] === 'i' || ev[0] === 'k') {
+    const pos = ev[2] as number
     const ids: number[] = []
-    for (let j = 0; j < n; j++) ids.push(st.next++)
+    for (let j = 0, n = inserted(ev); j < n; j++) ids.push(st.next++)
     st.live.splice(pos, 0, ...ids)
   } else if (ev[0] === 'd') {
     const [, , pos, n] = ev as [string, number, number, number]
@@ -68,7 +71,7 @@ function apply(st: State, ev: Ev) {
 // Caret position just after an event, or -1.
 function caretAfter(ev: Ev | undefined): number {
   if (!ev) return -1
-  if (ev[0] === 'i') return (ev[2] as number) + (ev[3] as number)
+  if (ev[0] === 'i' || ev[0] === 'k') return (ev[2] as number) + inserted(ev)
   if (ev[0] === 'd') return ev[2] as number
   if (ev[0] === 'r') return (ev[2] as number) + decodeRanges(ev[4] as number[]).length
   return -1
@@ -85,10 +88,11 @@ export class Timeline {
     this.snaps.push({ k: 0, live: [], next: 0 })
     doc.events.forEach((ev, i) => {
       // Copies within the document ("c") count as typed, as in arewehuman.
-      if (ev[0] === 'i') {
+      // Text moved from another file ("k") is shown like typed text, as in arewehuman.
+      if (ev[0] === 'i' || ev[0] === 'k') {
         const breaks = new Set((ev[5] as number[] | undefined) ?? [])
-        for (let j = 0; j < (ev[3] as number); j++) {
-          this.untyped.push(UNTYPED.has(ev[4] as string))
+        for (let j = 0, n = inserted(ev); j < n; j++) {
+          this.untyped.push(ev[0] === 'i' && UNTYPED.has(ev[4] as string))
           this.lineBreak.push(breaks.has(j))
         }
       }
