@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "thumbnails": "node scripts/generate-thumbnails.mjs",
     "video": "node scripts/video.mjs",
-    "prov": "node scripts/prov.mjs"
+    "prov": "node scripts/prov.mjs",
+    "publish": "node scripts/publish.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
