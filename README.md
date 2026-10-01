@@ -22,14 +22,14 @@ A post needs no frontmatter. Its title is a leading `# ` line (which the page sh
 
 ## Recorded posts
 
-A post can carry a recording of its writing, made with [arewehuman](https://github.com/magland/arewehuman): a file `YYYY-MM-DD-<slug>.prov.json` next to the post. The post page then offers a replay ("Watch this being written"), shows the "Written by Humans" badge, and serves the recording at `/provenance/YYYY-MM-DD-<slug>.prov.json`. The build fails if the post body (everything after the frontmatter) differs from the recorded text, since the replay would then not end in the text being shown.
+A post can carry a recording of its writing, made with [arewehuman](https://github.com/magland/arewehuman): a file `YYYY-MM-DD-<slug>.md.awh.jsonl` next to the post. The post page then offers a replay ("Watch this being written"), shows the "Written by Humans" badge, and serves the recording at `/provenance/YYYY-MM-DD-<slug>.md.awh.jsonl`. The build fails if the post body (everything after the frontmatter) differs from the recorded text, since the replay would then not end in the text being shown.
 
-To write a recorded post in VS Code with the arewehuman extension, right-click `src/content/posts` and choose "New Recorded Document…", name it `YYYY-MM-DD-<slug>.md`, and start with a `# Title` line. Saving writes the `.prov.json` next to it. Frontmatter, if any, goes in the editor's frontmatter field and is not recorded. Reopening the post later opens it in the recording editor again, so edits stay in the recording.
+To write a recorded post in VS Code with the arewehuman extension, right-click `src/content/posts` and choose "New Recorded Document…", name it `YYYY-MM-DD-<slug>.md`, and start with a `# Title` line. Saving brings the `.md.awh.jsonl` next to it up to date. Frontmatter, if any, goes in the editor's frontmatter field and is not recorded. Reopening the post later opens it in the recording editor again, so edits stay in the recording.
 
 A post written in the arewehuman web app is added with
 
 ```bash
-npm run prov -- ~/Downloads/<name>.prov.json
+npm run prov -- ~/Downloads/<name>.md.awh.jsonl
 ```
 
 which writes the post (the recorded text) and copies the recording next to it. See `scripts/prov.mjs`.

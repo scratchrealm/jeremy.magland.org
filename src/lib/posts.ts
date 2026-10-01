@@ -8,11 +8,12 @@
 //   summary  defaults to the first sentence of the body
 //   authors  defaults to [AUTHOR]
 //   featured defaults to true
-// A post may have an arewehuman recording, <same name>.prov.json, next to it.
+// A post may have an arewehuman recording, <same name>.md.awh.jsonl, next to it.
 // The post then offers a replay, gets the "written by humans" badge, and its
 // body must be exactly the recorded text, or the build fails.
 import { getCollection, type CollectionEntry } from 'astro:content'
 import { existsSync, readFileSync } from 'node:fs'
+import { parseRecording } from './provenance'
 
 export const AUTHOR = 'Jeremy Magland'
 
@@ -49,13 +50,13 @@ function toPost(entry: CollectionEntry<'posts'>): Post {
   const date = data.date ?? (named ? new Date(`${named}T00:00:00Z`) : fail('no date (name the file YYYY-MM-DD-<slug>.md)'))
 
   let provenance: Post['provenance']
-  const file = entry.filePath?.replace(/\.mdx?$/, '.prov.json')
+  const file = entry.filePath && `${entry.filePath}.awh.jsonl`
   if (file && existsSync(file)) {
     // A replay is only honest if it ends in exactly the text being shown.
-    const prov = JSON.parse(readFileSync(file, 'utf8'))
-    if (body.trim() !== String(prov.text).trim())
+    const rec = parseRecording(readFileSync(file, 'utf8'))
+    if (body.trim() !== rec.text.trim())
       fail(`the text differs from its recording ${file}; edit it in the recording editor`)
-    provenance = { file, url: `/provenance/${id}.prov.json` }
+    provenance = { file, url: `/provenance/${id}.md.awh.jsonl` }
   }
 
   return {

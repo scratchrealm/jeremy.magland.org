@@ -2,7 +2,7 @@
 // Replay of a post being written, from an arewehuman provenance file. The
 // trigger link lives in the post header ([data-replay-open]); when clicked,
 // the formatted body ([data-post-body]) is hidden and this panel shows the
-// raw Markdown as it was typed, in place. The .prov.json is fetched on first
+// raw Markdown as it was typed, in place. The .md.awh.jsonl is fetched on first
 // use, so the post costs nothing extra until then.
 interface Props {
   src: string
@@ -34,13 +34,13 @@ const { src } = Astro.props
   <div class="replay-text" data-replay-text></div>
   <p class="replay-note">
     <span class="untyped">Highlighted</span> text was not typed.
-    <span class="ghost">░░</span> marks text that was later deleted; its content was never recorded.
+    <span class="ghost">░░</span> marks text that was later deleted; its content was never recorded, apart from where its line breaks were.
     Long pauses are shortened.
   </p>
 </div>
 
 <script>
-  import { Timeline, type ProvDoc, type Run } from '../lib/provenance'
+  import { parseRecording, Timeline, type ProvDoc, type Run } from '../lib/provenance'
 
   // Replay timing, identical to the player in arewehuman (src/viewer/Replay.tsx).
   // For Fast/Normal/Slow, gaps up to PAUSE_MS are typing rhythm and keep their
@@ -92,7 +92,7 @@ const { src } = Astro.props
       opener.disabled = true
       label.textContent = 'Loading…'
       try {
-        const doc: ProvDoc = await (await fetch(panel.dataset.src!)).json()
+        const doc: ProvDoc = parseRecording(await (await fetch(panel.dataset.src!)).text())
         tl = new Timeline(doc)
         events = doc.events
         timing()

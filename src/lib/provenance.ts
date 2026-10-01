@@ -1,11 +1,15 @@
-// Minimal replayer for arewehuman provenance files (.prov.json), format
-// version 1: https://github.com/magland/arewehuman/blob/main/SPEC.md
+// Minimal replayer for arewehuman recordings (<name>.md.awh.jsonl), format
+// version 2: https://github.com/magland/arewehuman/blob/main/SPEC.md
+//
+// The file has one JSON value per line: a header, then events and checkpoint
+// objects, and last an object with the recorded text.
 //
 // Events are ["s", t] | ["i", t, pos, n, src] | ["d", t, pos, n] |
 // ["r", t, pos, kind, ranges]. Every inserted character gets the next integer
 // id and keeps the source of its insert ("t" typed, "p" pasted, ...). Only
 // characters that survive into the final text have known values; the rest are
-// shown as placeholders.
+// shown as placeholders, except for line breaks, which an insert lists (as
+// offsets into the inserted text) in an optional sixth element.
 
 type Ev = [string, number, ...unknown[]]
 
@@ -13,6 +17,17 @@ export interface ProvDoc {
   t0: number
   text: string
   events: Ev[]
+}
+
+// Reads a recording. Checkpoints are skipped: the hash chain is for verifiers.
+export function parseRecording(s: string): ProvDoc {
+  const lines = s.split('\n').filter((l) => l.trim())
+  const head = JSON.parse(lines[0] ?? 'null')
+  if (head?.format !== 'arewehuman' || head.version !== 2) throw new Error('Not an arewehuman recording (format version 2)')
+  const final = JSON.parse(lines[lines.length - 1])
+  if (typeof final?.text !== 'string') throw new Error('The recording has no final line with the text')
+  const events = lines.slice(1, -1).map((l) => JSON.parse(l)).filter((v): v is Ev => Array.isArray(v))
+  return { t0: head.t0, text: final.text, events }
 }
 
 const UNTYPED = new Set(['p', 'x', 'o'])
@@ -63,13 +78,20 @@ export class Timeline {
   private snaps: { k: number; live: number[]; next: number }[] = []
   private finalIndex = new Map<number, number>() // id -> index in final text
   private untyped: boolean[] = [] // by id
+  private lineBreak: boolean[] = [] // by id
 
   constructor(readonly doc: ProvDoc) {
     const st: State = { live: [], next: 0 }
     this.snaps.push({ k: 0, live: [], next: 0 })
     doc.events.forEach((ev, i) => {
       // Copies within the document ("c") count as typed, as in arewehuman.
-      if (ev[0] === 'i') for (let j = 0; j < (ev[3] as number); j++) this.untyped.push(UNTYPED.has(ev[4] as string))
+      if (ev[0] === 'i') {
+        const breaks = new Set((ev[5] as number[] | undefined) ?? [])
+        for (let j = 0; j < (ev[3] as number); j++) {
+          this.untyped.push(UNTYPED.has(ev[4] as string))
+          this.lineBreak.push(breaks.has(j))
+        }
+      }
       apply(st, ev)
       if ((i + 1) % 500 === 0) this.snaps.push({ k: i + 1, live: st.live.slice(), next: st.next })
     })
@@ -89,7 +111,7 @@ export class Timeline {
       const fi = this.finalIndex.get(id)
       const ghost = fi === undefined
       const untyped = this.untyped[id]
-      const ch = ghost ? '░' : this.doc.text[fi]
+      const ch = ghost ? (this.lineBreak[id] ? '\n' : '░') : this.doc.text[fi]
       const last = runs[runs.length - 1]
       if (last && last.ghost === ghost && last.untyped === untyped) last.text += ch
       else runs.push({ text: ch, ghost, untyped })
