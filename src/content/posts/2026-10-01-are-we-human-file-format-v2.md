@@ -4,7 +4,7 @@ summary: "A motivation and description for the arewehuman file format (v2) for t
 featured: false
 ---
 
-<video controls playsinline preload="metadata" poster="https://media.magland.org/videos/are-we-human-file-format-v1-492238037ab8.jpg" style="width: 100%;" src="https://media.magland.org/videos/are-we-human-file-format-v1-809a7be3f5fb.mp4"></video>
+<video controls playsinline preload="metadata" poster="https://media.magland.org/videos/are-we-human-file-format-v1-492238037ab8.jpg" style="width: 100%;" src="https://media.magland.org/videos/are-we-human-file-format-v1-db22cbc6fc7e.mp4"></video>
 
 This is a follow-up to [Are we human?](/posts/2026-09-29-are-we-human/), which introduced the arewehuman app.
 
