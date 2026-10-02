@@ -7,6 +7,9 @@ description: >-
 
 # Publications
 
+- **Magland J**. Computing the entropy rate of a quantized stationary Gaussian process. *arXiv preprint*, 2026.
+  [arXiv:2609.18784](https://arxiv.org/abs/2609.18784)
+
 - Ward B, Soules J, **Magland J**. Stan Playground: Run Stan models directly in your browser. *Journal of Open Source Software*, 2026.
   [doi:10.21105/joss.09531](https://doi.org/10.21105/joss.09531)
 
@@ -70,7 +73,7 @@ description: >-
 - Zhang N, **Magland JF**, Song HK, Wehrli FW. Registration-based autofocusing technique for automatic correction of motion artifacts in time-series studies of high-resolution bone MRI. *Journal of Magnetic Resonance Imaging*, 2015.
   [doi:10.1002/jmri.24646](https://doi.org/10.1002/jmri.24646)
 
-- **Magland JF**, Barnett AH. Unimodal clustering using isotonic regression: ISO-SPLIT. 2015.
+- **Magland JF**, Barnett AH. Unimodal clustering using isotonic regression: ISO-SPLIT. *arXiv preprint*, 2015.
   [arXiv:1508.04841](https://arxiv.org/abs/1508.04841)
 
 - Li C, **Magland JF**, Seifert AC, Wehrli FW. Correction of excitation profile in Zero Echo Time (ZTE) imaging using quadratic phase-modulated RF pulse excitation and iterative reconstruction. *IEEE Transactions on Medical Imaging*, 2014.
@@ -181,7 +184,7 @@ description: >-
 - **Magland JF**, Jones CE, Leonard MB, Wehrli FW. Retrospective 3D registration of trabecular bone MR images for longitudinal studies. *Journal of Magnetic Resonance Imaging*, 2009.
   [doi:10.1002/jmri.21551](https://doi.org/10.1002/jmri.21551)
 
-- **Magland JF**. Discrete inverse scattering theory for NMR pulse design. 2009.
+- **Magland JF**. Discrete inverse scattering theory for NMR pulse design. *arXiv preprint*, 2009.
   [arXiv:0903.4363](https://arxiv.org/abs/0903.4363)
 
 - Li CQ, **Magland JF**, Rajapakse CS, Guo XE, Zhang XH, Vasilic B, Wehrli FW. Implications of resolution and noise for in vivo micro-MRI of trabecular bone. *Medical Physics*, 2008.
