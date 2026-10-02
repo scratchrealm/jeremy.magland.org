@@ -1271,7 +1271,7 @@ html.live-editing {
 .live-edit-editor .cm-editor {
   font-size: 1rem;
   outline: none;
-  --link: var(--link);
+  /* Names used by arewehuman's syntax highlighting; --link it shares with the site. */
   --muted: var(--text-muted);
   --mono: var(--font-mono);
 }
