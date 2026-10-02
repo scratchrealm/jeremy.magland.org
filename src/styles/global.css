@@ -67,18 +67,18 @@ body {
   flex-wrap: wrap;
 }
 
-.site-nav a {
+.site-nav > a {
   font-family: var(--font-ui);
   font-size: 0.875rem;
   color: var(--text-muted);
   text-decoration: none;
 }
 
-.site-nav a:hover {
+.site-nav > a:hover {
   color: var(--link);
 }
 
-.site-nav a.active {
+.site-nav > a.active {
   color: var(--text);
 }
 
@@ -497,6 +497,170 @@ body {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.1rem 0.25rem;
+}
+
+/* Site search (components/Search.astro). The button is a muted icon at the
+   end of the nav; the dialog opens near the top of the viewport. */
+
+.search-open {
+  display: inline-flex;
+  align-self: center;
+  padding: 0.15rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.search-open:hover,
+.search-open:focus-visible {
+  color: var(--link);
+}
+
+.search-dialog {
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 6rem);
+  margin: 4rem auto auto;
+  padding: 0;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
+}
+
+.search-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-dialog::backdrop {
+  background: rgb(0 0 0 / 0.3);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.3rem 0;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* The Esc button closes the dialog; the browser's own clear button beside it
+   would read as a second close button. */
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-close {
+  font-family: var(--font-ui);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+  cursor: pointer;
+}
+
+.search-status {
+  margin: 0;
+  padding: 0 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.search-status:not(:empty) {
+  padding: 0.5rem 0.9rem 0;
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0 0.9rem 0.5rem;
+  overflow-y: auto;
+}
+
+.search-result {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result:last-child {
+  border-bottom: none;
+}
+
+.search-result-title {
+  font-family: var(--font-heading);
+  font-weight: bold;
+  color: var(--link);
+  text-decoration: none;
+}
+
+.search-result a:hover,
+.search-result a:focus-visible {
+  text-decoration: underline;
+}
+
+.search-result-date {
+  margin-left: 0.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.search-result-excerpt {
+  margin: 0.2rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.search-result mark {
+  color: var(--text);
+  background: color-mix(in srgb, var(--link) 22%, transparent);
+  border-radius: 2px;
+}
+
+.search-result-sections {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0 0 0 0.75rem;
+  border-left: 2px solid var(--border);
+}
+
+.search-result-sections li + li {
+  margin-top: 0.4rem;
+}
+
+.search-result-sections a {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--link);
+  text-decoration: none;
+}
+
+.search-result-sections .search-result-excerpt {
+  margin-top: 0.1rem;
 }
 
 /* Transient indicator shown when cycling themes with the keyboard */

@@ -10,7 +10,7 @@ interface Props {
 const { src } = Astro.props
 ---
 
-<div class="replay" data-replay data-src={src} hidden>
+<div class="replay" data-replay data-src={src} hidden data-pagefind-ignore>
   <div class="replay-bar">
     <button type="button" class="replay-play" data-replay-play>❚❚ Pause</button>
     <input type="range" class="replay-seek" data-replay-seek min="0" max="1" step="any" value="0" aria-label="Replay position" />

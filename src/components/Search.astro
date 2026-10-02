@@ -1,0 +1,155 @@
+---
+// Site search: a magnifier in the header that opens a dialog. The index is
+// built by Pagefind from the built HTML after `astro build` (see the build
+// script) and loaded from /pagefind/ on first open, so it costs nothing until
+// used. What is indexed is set in BaseLayout.astro (data-pagefind-body) and by
+// data-pagefind-ignore on page furniture. Under `npm run dev` there is no
+// index; use `npm run build && npm run preview`.
+---
+
+<button
+  type="button"
+  class="search-open"
+  aria-label="Search the site"
+  title="Search (/)"
+  data-search-open
+>
+  <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+    <circle cx="6.75" cy="6.75" r="4.75" fill="none" stroke="currentColor" stroke-width="1.6" />
+    <path d="M10.3 10.3 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+  </svg>
+</button>
+
+<dialog class="search-dialog" aria-label="Search the site" data-search-dialog>
+  <div class="search-box">
+    <input
+      type="search"
+      class="search-input"
+      placeholder="Search posts and pages"
+      autocomplete="off"
+      spellcheck="false"
+      aria-label="Search"
+      data-search-input
+    />
+    <button type="button" class="search-close" aria-label="Close" data-search-close>Esc</button>
+  </div>
+  <p class="search-status" role="status" data-search-status></p>
+  <ol class="search-results" data-search-results></ol>
+</dialog>
+
+<script is:inline>
+  {
+    const openButton = document.querySelector('[data-search-open]')
+    const dialog = document.querySelector('[data-search-dialog]')
+    const input = dialog.querySelector('[data-search-input]')
+    const status = dialog.querySelector('[data-search-status]')
+    const list = dialog.querySelector('[data-search-results]')
+    const MAX_RESULTS = 12
+    const MAX_SECTIONS = 3
+
+    let pagefindPromise
+    const loadPagefind = () => {
+      pagefindPromise ??= import('/pagefind/pagefind.js').then(async (pf) => {
+        await pf.options({ excerptLength: 24 })
+        pf.init()
+        return pf
+      })
+      return pagefindPromise
+    }
+
+    const el = (tag, className, html) => {
+      const e = document.createElement(tag)
+      if (className) e.className = className
+      if (html !== undefined) e.innerHTML = html
+      return e
+    }
+
+    // Excerpts come from Pagefind with matches already wrapped in <mark> and
+    // the page text escaped, so they are inserted as HTML. Titles are text.
+    const renderResult = (data) => {
+      const li = el('li', 'search-result')
+      const a = el('a', 'search-result-title')
+      a.href = data.url
+      a.textContent = data.meta.title || data.url
+      li.appendChild(a)
+      if (data.meta.date) {
+        const date = el('span', 'search-result-date')
+        date.textContent = data.meta.date
+        li.appendChild(date)
+      }
+      // Sections (headings with ids) that match, such as parts of a video
+      // transcript. A match above the first subheading comes back as a
+      // section for the page itself or its h1; that one is shown as the
+      // page excerpt instead.
+      const subs = data.sub_results || []
+      const sections = subs.filter((s) => s.url !== data.url && s.anchor?.element !== 'h1')
+      if (sections.length === 0 || sections.length < subs.length) {
+        li.appendChild(el('p', 'search-result-excerpt', data.excerpt))
+      }
+      if (sections.length > 0) {
+        const ul = el('ul', 'search-result-sections')
+        for (const s of sections.slice(0, MAX_SECTIONS)) {
+          const sli = el('li')
+          const sa = el('a')
+          sa.href = s.url
+          sa.textContent = s.title
+          sli.appendChild(sa)
+          sli.appendChild(el('p', 'search-result-excerpt', s.excerpt))
+          ul.appendChild(sli)
+        }
+        li.appendChild(ul)
+      }
+      return li
+    }
+
+    const search = async () => {
+      const query = input.value.trim()
+      if (!query) {
+        list.replaceChildren()
+        status.textContent = ''
+        return
+      }
+      let pf
+      try {
+        pf = await loadPagefind()
+      } catch {
+        status.textContent = 'Search is not available here (the index is built by npm run build).'
+        return
+      }
+      const res = await pf.debouncedSearch(query, {}, 150)
+      if (res === null) return // superseded by a newer query
+      const results = await Promise.all(res.results.slice(0, MAX_RESULTS).map((r) => r.data()))
+      if (input.value.trim() !== query) return
+      list.replaceChildren(...results.map(renderResult))
+      const n = res.results.length
+      status.textContent = n === 0 ? 'No results.' : n === 1 ? '1 page' : `${n} pages`
+    }
+
+    const open = () => {
+      if (dialog.open) return
+      dialog.showModal()
+      input.select()
+      loadPagefind().catch(() => {})
+    }
+
+    openButton.addEventListener('click', open)
+    dialog.querySelector('[data-search-close]').addEventListener('click', () => dialog.close())
+    input.addEventListener('input', search)
+    // A click on the backdrop lands on the dialog element itself.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close()
+    })
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target
+      if (
+        t instanceof HTMLElement &&
+        (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)
+      )
+        return
+      e.preventDefault()
+      open()
+    })
+  }
+</script>

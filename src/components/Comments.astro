@@ -12,7 +12,7 @@ const { threadId, title } = Astro.props
 
 {
   ISSO_URL && (
-    <section class="comments" aria-labelledby="comments-heading">
+    <section class="comments" aria-labelledby="comments-heading" data-pagefind-ignore>
       <h2 id="comments-heading">Comments</h2>
       <p class="comments-note">Comments are anonymous and appear once approved.</p>
       {

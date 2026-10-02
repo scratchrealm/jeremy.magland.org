@@ -16,7 +16,7 @@ const posts = (await getPosts()).filter((p) => p.featured).slice(0, count)
 
 {
   posts.length > 0 && (
-    <section class="recent-posts">
+    <section class="recent-posts" data-pagefind-ignore>
       <h2>Recent posts</h2>
       <ul>
         {posts.map((post) => (

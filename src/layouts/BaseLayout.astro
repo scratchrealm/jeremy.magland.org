@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content'
 import { SITE_TITLE, SITE_DESCRIPTION, GOATCOUNTER_CODE } from '../lib/site'
 import { DEFAULT_THEME } from '../lib/themes'
 import ThemeSwitcher from '../components/ThemeSwitcher.astro'
+import Search from '../components/Search.astro'
 import '../styles/global.css'
 
 interface Props {
@@ -16,9 +17,19 @@ interface Props {
   noindex?: boolean
   /** ES modules to load, such as widget libraries a post uses */
   scripts?: string[]
+  /** Include the page in site search (default: unless noindex) */
+  searchable?: boolean
 }
 
-const { title, description, ogType = 'website', person = false, noindex = false, scripts = [] } = Astro.props
+const {
+  title,
+  description,
+  ogType = 'website',
+  person = false,
+  noindex = false,
+  scripts = [],
+  searchable = !noindex,
+} = Astro.props
 
 const fullTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE
 const metaDescription = description ?? SITE_DESCRIPTION
@@ -82,6 +93,7 @@ const personJsonLd = {
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={SITE_TITLE} />
     <meta name="twitter:card" content="summary" />
+    {searchable && <meta data-pagefind-meta="title" content={title ?? SITE_TITLE} />}
 
     {
       person && (
@@ -117,10 +129,11 @@ const personJsonLd = {
               </a>
             ))
           }
+          <Search />
         </nav>
       </header>
 
-      <main class="site-main">
+      <main class="site-main" data-pagefind-body={searchable ? '' : undefined}>
         <slot />
       </main>
 

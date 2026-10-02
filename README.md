@@ -2,8 +2,8 @@
 
 Personal website, built with [Astro](https://astro.build). Content is written
 in Markdown and pre-rendered to static HTML at build time (fast, SEO-friendly;
-the only client-side JavaScript is the tiny theme switcher, the analytics
-counter, and the comment widget on posts).
+the only client-side JavaScript is the tiny theme switcher, site search, the
+analytics counter, and the comment widget on posts).
 
 ## Development
 
@@ -82,6 +82,12 @@ the same selector for anything variables don't cover. Set
 `--color-scheme: dark` in dark themes so native controls render dark. The
 default theme is `DEFAULT_THEME` in `src/lib/themes.ts`; the `:root` values
 in `global.css` are a no-JS fallback and should mirror it.
+
+## Search
+
+The magnifier at the end of the nav (or the `/` key) opens a search dialog over all pages and posts, including video transcripts. The index is built by [Pagefind](https://pagefind.app), which runs after `astro build` (see the `build` script) and writes a static index to `dist/pagefind/`; the browser loads it from there on first use, so there is no server. A match under a subheading links to that section of the page. The dialog is `src/components/Search.astro` and its styles are in the Site search section of `src/styles/global.css`.
+
+Only the `<main>` of pages built with `BaseLayout`'s `searchable` prop are indexed (`data-pagefind-body`). It defaults to on unless the page is `noindex`, so drafts and the 404 page are left out, and `/posts/` turns it off since it only repeats post titles and summaries. Page furniture (comments, the replay, the human badge, the recent-posts list on the home page) is marked `data-pagefind-ignore`. Under `npm run dev` there is no index and the dialog says so; to try search locally, run `npm run build && npm run preview`.
 
 ## SEO
 

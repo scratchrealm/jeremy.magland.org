@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "thumbnails": "node scripts/generate-thumbnails.mjs",
     "video": "node scripts/video.mjs",
@@ -20,6 +20,7 @@
     "astro": "^5.17.3"
   },
   "devDependencies": {
+    "pagefind": "^1.5.2",
     "playwright-core": "^1.61.1"
   }
 }

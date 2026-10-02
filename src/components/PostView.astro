@@ -39,7 +39,7 @@ const originalHost = originalUrl
       <h1>{title}</h1>
       <p class="post-meta">
         {authors.length > 0 && <span>{formatAuthors(authors)} · </span>}
-        {draft ? <span class="post-draft">Draft, not published</span> : formatDate(date)}
+        {draft ? <span class="post-draft">Draft, not published</span> : <span data-pagefind-meta="date">{formatDate(date)}</span>}
       </p>
       {
         originalUrl && (
@@ -54,6 +54,7 @@ const originalHost = originalUrl
             type="button"
             class:list={['replay-open', { 'replay-open-prominent': replayProminent }]}
             data-replay-open
+            data-pagefind-ignore
           >
             <span class="replay-open-icon" aria-hidden="true">
               <svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>
@@ -73,7 +74,7 @@ const originalHost = originalUrl
     {thumbnails && thumbnails.length > 0 && <PostThumbnails urls={thumbnails} />}
     {
       writtenByHuman && (
-        <footer class="post-footer">
+        <footer class="post-footer" data-pagefind-ignore>
           <a
             class="human-badge"
             href="https://notbyai.fyi"
@@ -89,6 +90,6 @@ const originalHost = originalUrl
       )
     }
     {!draft && <Comments threadId={post.url} title={title} />}
-    <p>{draft ? <a href="/drafts/">← All drafts</a> : <a href="/posts/">← All posts</a>}</p>
+    <p data-pagefind-ignore>{draft ? <a href="/drafts/">← All drafts</a> : <a href="/posts/">← All posts</a>}</p>
   </article>
 </BaseLayout>
