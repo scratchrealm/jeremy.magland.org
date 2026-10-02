@@ -3,7 +3,7 @@ title: Spin up your own git forge with Mochi
 summary: A video walkthrough of Mochi Forge, a self-hosted GitHub replacement that runs locally with a single command.
 ---
 
-<video controls playsinline preload="metadata" poster="https://media.magland.org/videos/spin-up-your-own-git-forge-with-mochi-81c2108b31dd.jpg" style="width: 100%;" src="https://media.magland.org/videos/spin-up-your-own-git-forge-with-mochi-6404521fd391.mp4"></video>
+<video controls playsinline preload="metadata" poster="https://media.magland.org/jeremy.magland.org/videos/spin-up-your-own-git-forge-with-mochi-81c2108b31dd.jpg" style="width: 100%;" src="https://media.magland.org/jeremy.magland.org/videos/spin-up-your-own-git-forge-with-mochi-6404521fd391.mp4"></video>
 
 Source: [magland/mochiforge](https://github.com/magland/mochiforge) · [npm: @magland/mochi](https://www.npmjs.com/package/@magland/mochi)
 

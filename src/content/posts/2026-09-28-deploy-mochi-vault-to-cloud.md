@@ -3,7 +3,7 @@ title: Deploy a Mochi vault to the cloud
 summary: A video follow-up showing how to deploy a Mochi Forge vault to Fly.io with a single command, and how to back it up.
 ---
 
-<video controls playsinline preload="metadata" poster="https://media.magland.org/videos/deploy-mochi-vault-to-cloud-d882e290bcc9.jpg" style="width: 100%;" src="https://media.magland.org/videos/deploy-mochi-vault-to-cloud-2adf9c7eadeb.mp4"></video>
+<video controls playsinline preload="metadata" poster="https://media.magland.org/jeremy.magland.org/videos/deploy-mochi-vault-to-cloud-d882e290bcc9.jpg" style="width: 100%;" src="https://media.magland.org/jeremy.magland.org/videos/deploy-mochi-vault-to-cloud-2adf9c7eadeb.mp4"></video>
 
 This is a follow-up to [Spin up your own git forge with Mochi](/posts/2026-09-26-spin-up-your-own-git-forge-with-mochi/), which shows how to run a vault locally.
 

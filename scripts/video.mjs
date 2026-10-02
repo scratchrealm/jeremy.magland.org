@@ -1,10 +1,11 @@
 // Publish a video to the media bucket and point a post at it.
 //
 // Videos are not committed to git. They live in the R2 bucket BUCKET in the
-// personal Cloudflare account and are served from PUBLIC_BASE. Each upload is
-// stored under a name that includes a hash of its contents, so a URL never
-// changes meaning and can be cached forever; re-exporting a video produces a
-// new URL, and this script updates the post to use it.
+// personal Cloudflare account under KEY_PREFIX (the bucket holds one folder
+// per site) and are served from PUBLIC_BASE. Each upload is stored under a
+// name that includes a hash of its contents, so a URL never changes meaning
+// and can be cached forever; re-exporting a video produces a new URL, and this
+// script updates the post to use it.
 //
 //   npm run video -- mochi                    # takes video whose folder matches "mochi"
 //   npm run video -- ~/Videos/takes/<id>      # takes video folder
@@ -32,6 +33,7 @@ import { fileURLToPath } from 'node:url'
 const ACCOUNT_ID = 'cb02bd56f948bddd989c3d0e6e983c78' // personal Cloudflare account
 const BUCKET = 'jeremy-magland-org-media'
 const PUBLIC_BASE = 'https://media.magland.org'
+const KEY_PREFIX = 'jeremy.magland.org/videos'
 const TAKES_LIBRARY = path.join(os.homedir(), 'Videos/takes')
 // wrangler uploads objects through the Cloudflare API, which caps their size.
 const MAX_BYTES = 300 * 1024 * 1024
@@ -155,9 +157,9 @@ if (size > MAX_BYTES) fail(`${mp4} is ${(size / 1e6).toFixed(0)} MB; wrangler up
 const slug = slugArg ?? path.basename(mp4, '.mp4')
 if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) fail(`"${slug}" is not a usable name; pass --slug with lowercase letters, digits, and hyphens`)
 const hash = (await sha256(mp4)).slice(0, 12)
-const mp4Key = `videos/${slug}-${hash}.mp4`
+const mp4Key = `${KEY_PREFIX}/${slug}-${hash}.mp4`
 // The poster is keyed by its own hash, so replacing it gives a new URL even when the video is unchanged.
-const posterKey = poster ? `videos/${slug}-${(await sha256(poster)).slice(0, 12)}.jpg` : null
+const posterKey = poster ? `${KEY_PREFIX}/${slug}-${(await sha256(poster)).slice(0, 12)}.jpg` : null
 const mp4Url = `${PUBLIC_BASE}/${mp4Key}`
 const posterUrl = poster ? `${PUBLIC_BASE}/${posterKey}` : null
 

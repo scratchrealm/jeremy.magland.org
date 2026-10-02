@@ -37,13 +37,30 @@ which writes the post (the recorded text) and copies the recording next to it. S
 
 ## Videos
 
-Video posts are screencasts recorded with [takes](https://vault1.magland.org/proof-of-concept/takes) plus a transcript. Videos are not committed to git; they are stored in the R2 bucket `jeremy-magland-org-media` (personal Cloudflare account) and served from https://media.magland.org. After exporting a video in takes:
+Video posts are screencasts recorded with [takes](https://vault1.magland.org/proof-of-concept/takes) plus a transcript. Videos are not committed to git; they are stored in the R2 bucket `jeremy-magland-org-media` (personal Cloudflare account) under `jeremy.magland.org/videos/` and served from https://media.magland.org/jeremy.magland.org/videos/. The bucket has one folder per site. After exporting a video in takes:
 
 ```bash
 npm run video -- <name fragment of the takes folder>
 ```
 
 This uploads the MP4 and its thumbnail (used as the poster) under names that include a content hash, then either updates the `<video>` tag of the post that already embeds the video, or creates `src/content/posts/<today>-<slug>.md` with the title, summary, and raw transcript from takes. Re-exporting and running it again gives a new URL, so cached copies never go stale. Any MP4 file also works as the argument, and `--slug NAME` overrides the name. See `scripts/video.mjs`. Uploads use wrangler, which must be logged in to the personal account.
+
+## Widget libraries (planned)
+
+Not implemented yet; this records the approach. A post can embed interactive widgets as web components. The post body uses the custom elements as raw HTML, and the frontmatter key `scripts` lists the full URLs of the JavaScript libraries (ES modules) that define them; the layout adds each as a `<script type="module">` on that post's page. The URLs go in the frontmatter rather than in the body because the body is the recorded text, and frontmatter can change without breaking the recording.
+
+Libraries are built and uploaded by hand, not by CI, and stored in the media bucket under `jeremy.magland.org/libs/`. A post therefore keeps exactly the bytes it was published with, old libraries never need to be rebuilt, and large libraries stay out of git. The build recipes live in `libs/` in this repo, with their own `package.json` and lockfile, separate from the site's. Widgets are developed in proof-of-concept repos (on vault1.magland.org or GitHub), installed here as git dependencies (built on install by each package's `prepare` script, so no repo commits build output) and bundled into one file per library. An upload script will:
+
+- refuse to run if `libs/` has uncommitted changes,
+- build the library and upload it as `jeremy.magland.org/libs/<name>-<hash>.js`, named by a hash of its contents and never overwritten,
+- upload a record `<name>-<hash>.json` beside it with the commit of this repo, the build command, and the Node version,
+- set the post's `scripts` entry to the new URL.
+
+To rebuild a library, check out the recorded commit; the lockfile pins the commit of every proof of concept.
+
+During development, `scripts` points at a local build (for example `http://localhost:5173/foo-widget.js`) and the post is previewed with `astro dev`, so nothing is uploaded until the post is published. The production build fails if a `scripts` entry is not under `https://media.magland.org/jeremy.magland.org/libs/`.
+
+Setup still needed: a CORS rule on the bucket (browsers require it for module scripts from another origin), and if available, an R2 bucket lock on the `jeremy.magland.org/libs/` prefix so uploaded libraries cannot be overwritten or deleted.
 
 ## Themes
 
