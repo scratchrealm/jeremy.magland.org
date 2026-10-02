@@ -1,6 +1,6 @@
 # Figpack for the Curious
 
-[Figpack](https://figpack.org) is a Python (or MATLAB) package that let's you create interactive, data-rich scientific figures and optionally share them over the internet. This post is for those who are curious about how Figpack works - the design decisions, rationale, etc.
+[Figpack](https://figpack.org) is a Python (or MATLAB) package that lets you create interactive, data-rich scientific figures and optionally share them over the internet. This post is for those who are curious about how Figpack works - the design decisions, rationale, etc.
 
 ## What's the core idea?
 
