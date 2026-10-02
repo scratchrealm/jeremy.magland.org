@@ -6,6 +6,7 @@ import remarkPostTitle from './src/lib/remark-post-title.mjs'
 
 export default defineConfig({
   site: 'https://jeremy.magland.org',
-  integrations: [mdx(), sitemap()],
+  // Drafts are left out of the sitemap (see src/pages/drafts/).
+  integrations: [mdx(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/drafts/') })],
   markdown: { remarkPlugins: [remarkPostTitle] },
 })

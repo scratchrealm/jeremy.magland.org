@@ -1,0 +1,27 @@
+---
+// Lists the drafts. Nothing links here, and search engines are asked not to
+// index it, but it is not private: anyone who knows the URL can read it.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getDrafts } from '../../lib/posts'
+
+const drafts = await getDrafts()
+---
+
+<BaseLayout title="Drafts" description="Unpublished drafts." noindex>
+  <div class="prose">
+    <h1>Drafts</h1>
+    {drafts.length === 0 && <p>No drafts.</p>}
+    <ul class="post-list">
+      {
+        drafts.map((post) => (
+          <li>
+            <div>
+              <a href={post.url}>{post.title}</a>
+              {post.summary && <p class="post-summary">{post.summary}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

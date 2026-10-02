@@ -12,9 +12,13 @@ interface Props {
   ogType?: string
   /** Include the JSON-LD Person block (home page only) */
   person?: boolean
+  /** Ask search engines not to index the page (drafts) */
+  noindex?: boolean
+  /** ES modules to load, such as widget libraries a post uses */
+  scripts?: string[]
 }
 
-const { title, description, ogType = 'website', person = false } = Astro.props
+const { title, description, ogType = 'website', person = false, noindex = false, scripts = [] } = Astro.props
 
 const fullTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE
 const metaDescription = description ?? SITE_DESCRIPTION
@@ -63,6 +67,7 @@ const personJsonLd = {
     <title>{fullTitle}</title>
     <meta name="description" content={metaDescription} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
@@ -86,6 +91,8 @@ const personJsonLd = {
         />
       )
     }
+
+    {scripts.map((src) => <script is:inline type="module" src={src} />)}
 
     {
       GOATCOUNTER_CODE && import.meta.env.PROD && (

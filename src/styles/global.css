@@ -258,6 +258,12 @@ body {
   margin: 0;
 }
 
+/* "Draft, not published" in place of a draft's date */
+.post-draft {
+  color: var(--link);
+  font-weight: 600;
+}
+
 /* "Originally posted at ..." repost link */
 .post-original {
   margin: 0.25rem 0 0;

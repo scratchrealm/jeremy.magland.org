@@ -16,7 +16,7 @@ npm run dev
 
 - **Pages** live in `src/content/pages/*.md` (or `.mdx` for pages that embed components). Frontmatter: `title`, `order` (position in the nav), `description` (meta description for search/link previews). `home.mdx` is the front page; any other file `foo.md` is served at `/foo/`.
 - **Posts** live in `src/content/posts/`, one file `YYYY-MM-DD-<slug>.md` per post, served at `/posts/YYYY-MM-DD-<slug>/` and listed at `/posts` newest first.
-- **Drafts** of posts live in `src/content/draft_posts/<slug>.md` (with their recordings), undated and not built into the site. They are committed, so they are backed up and their history is public. `npm run publish -- <slug> [--date YYYY-MM-DD]` gives a draft a date (default today) and moves it and its recording into `src/content/posts/`; close it in VS Code first. See `scripts/publish.mjs`.
+- **Drafts** of posts live in `src/content/draft_posts/<slug>.md` (with their recordings), undated. Each is shown at `/drafts/<slug>/`, and all are listed at `/drafts/`. Nothing links there, the pages ask search engines not to index them, they are left out of the sitemap and RSS, and they have no comments, but they are not private: anyone with the URL can read them. They are committed, so they are backed up and their history is public. `npm run publish -- <slug> [--date YYYY-MM-DD]` gives a draft a date (default today) and moves it and its recording into `src/content/posts/`; close it in VS Code first. See `scripts/publish.mjs`.
 - `drafts/ai-posts/` holds old posts drafted with AI; they are not published.
 
 A post needs no frontmatter. Its title is a leading `# ` line (which the page shows as the title rather than in the body), its date comes from the file name, and its summary is its first sentence. Posts with the same date are listed in the order they were first committed, newest first. Frontmatter overrides these and sets the rest: `title`, `date`, `summary`, `authors` (default: Jeremy Magland), `featured` (default true; the home page lists the ten most recent featured posts), `originalUrl` (for a repost), `writtenByHuman` (the "Written by Humans" badge), `replayProminent`, and `thumbnails`. The schema is in `src/content.config.ts` and the defaults in `src/lib/posts.ts`.
@@ -45,22 +45,27 @@ npm run video -- <name fragment of the takes folder>
 
 This uploads the MP4 and its thumbnail (used as the poster) under names that include a content hash, then either updates the `<video>` tag of the post that already embeds the video, or creates `src/content/posts/<today>-<slug>.md` with the title, summary, and raw transcript from takes. Re-exporting and running it again gives a new URL, so cached copies never go stale. Any MP4 file also works as the argument, and `--slug NAME` overrides the name. See `scripts/video.mjs`. Uploads use wrangler, which must be logged in to the personal account.
 
-## Widget libraries (planned)
+## Widget libraries
 
-Not implemented yet; this records the approach. A post can embed interactive widgets as web components. The post body uses the custom elements as raw HTML, and the frontmatter key `scripts` lists the full URLs of the JavaScript libraries (ES modules) that define them; the layout adds each as a `<script type="module">` on that post's page. The URLs go in the frontmatter rather than in the body because the body is the recorded text, and frontmatter can change without breaking the recording.
+A post can embed interactive widgets as web components. The post body uses the custom elements as raw HTML, and the frontmatter key `scripts` lists the full URLs of the JavaScript libraries (ES modules) that define them; the page loads each with a `<script type="module">`. The URLs go in the frontmatter rather than in the body because the body is the recorded text, and frontmatter can change without breaking the recording. See `src/content/draft_posts/widget-example.md`.
 
-Libraries are built and uploaded by hand, not by CI, and stored in the media bucket under `jeremy.magland.org/libs/`. A post therefore keeps exactly the bytes it was published with, old libraries never need to be rebuilt, and large libraries stay out of git. The build recipes live in `libs/` in this repo, with their own `package.json` and lockfile, separate from the site's. Widgets are developed in proof-of-concept repos (on vault1.magland.org or GitHub), installed here as git dependencies (built on install by each package's `prepare` script, so no repo commits build output) and bundled into one file per library. An upload script will:
+Libraries are built and uploaded by hand, not by CI, and stored in the media bucket under `jeremy.magland.org/libs/`. A post therefore keeps exactly the bytes it was published with, old libraries never need to be rebuilt, and large libraries stay out of git. A library is `libs/<name>/index.js`, bundled by esbuild into one file. `libs/` has its own `package.json` and lockfile, separate from the site's; widget code from proof-of-concept repos (on vault1.magland.org or GitHub) is installed there as git dependencies, built on install by each package's `prepare` script, so no repo commits build output.
 
-- refuse to run if `libs/` has uncommitted changes,
-- build the library and upload it as `jeremy.magland.org/libs/<name>-<hash>.js`, named by a hash of its contents and never overwritten,
-- upload a record `<name>-<hash>.json` beside it with the commit of this repo, the build command, and the Node version,
-- set the post's `scripts` entry to the new URL.
+While working on a post, serve the library locally and put its URL in the post's `scripts`:
 
-To rebuild a library, check out the recorded commit; the lockfile pins the commit of every proof of concept.
+```bash
+npm run lib -- hello-counter --dev
+```
 
-During development, `scripts` points at a local build (for example `http://localhost:5173/foo-widget.js`) and the post is previewed with `astro dev`, so nothing is uploaded until the post is published. The production build fails if a `scripts` entry is not under `https://media.magland.org/jeremy.magland.org/libs/`.
+This serves `http://localhost:5174/hello-counter.js`, rebuilt on every change; preview the post with `npm run dev`. To publish the library, commit and push, then run
 
-Setup still needed: a CORS rule on the bucket (browsers require it for module scripts from another origin), and if available, an R2 bucket lock on the `jeremy.magland.org/libs/` prefix so uploaded libraries cannot be overwritten or deleted.
+```bash
+npm run lib -- hello-counter
+```
+
+which refuses to run if `libs/` has uncommitted or unpushed changes, reinstalls `libs/` from its lockfile, bundles the library, and uploads it as `jeremy.magland.org/libs/<name>-<hash>.js`, named by a hash of its contents and never overwritten. Next to it goes `<name>-<hash>.json`, a record of the commit, the build command, and the tool versions. It then points every post and draft that refers to the library (a development URL or an earlier upload) at the new URL. To check that a library can be rebuilt, check out its recorded commit and run `npm run lib -- <name> --build`, which prints the hash. See `scripts/lib.mjs`.
+
+The production build fails if a published post's `scripts` entry is not under `https://media.magland.org/jeremy.magland.org/libs/`. Drafts may point anywhere, so a draft deployed with a development URL just shows no widget. Browsers load module scripts from another origin only with CORS headers; the bucket's CORS rule is in `scripts/media-cors.json` (apply it with `wrangler r2 bucket cors set jeremy-magland-org-media --file scripts/media-cors.json`). Not done yet: an R2 bucket lock on `jeremy.magland.org/libs/`, so uploaded libraries cannot be overwritten or deleted.
 
 ## Themes
 

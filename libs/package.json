@@ -1,0 +1,9 @@
+{
+  "name": "jeremy-magland-org-libs",
+  "private": true,
+  "type": "module",
+  "description": "Build recipes for the widget libraries embedded in posts; see README.md, Widget libraries",
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

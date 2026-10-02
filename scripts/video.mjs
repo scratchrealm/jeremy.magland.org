@@ -1,11 +1,10 @@
 // Publish a video to the media bucket and point a post at it.
 //
-// Videos are not committed to git. They live in the R2 bucket BUCKET in the
-// personal Cloudflare account under KEY_PREFIX (the bucket holds one folder
-// per site) and are served from PUBLIC_BASE. Each upload is stored under a
-// name that includes a hash of its contents, so a URL never changes meaning
-// and can be cached forever; re-exporting a video produces a new URL, and this
-// script updates the post to use it.
+// Videos are not committed to git. They live in the media bucket (see
+// media.mjs) under KEY_PREFIX. Each upload is stored under a name that
+// includes a hash of its contents, so a URL never changes meaning and can be
+// cached forever; re-exporting a video produces a new URL, and this script
+// updates the post to use it.
 //
 //   npm run video -- mochi                    # takes video whose folder matches "mochi"
 //   npm run video -- ~/Videos/takes/<id>      # takes video folder
@@ -17,23 +16,16 @@
 // its <video> tag is replaced. Otherwise a new post is created with the title
 // and description from takes and the raw transcript of the timeline, ready to
 // be edited into a formatted transcript.
-//
-// Uploads go through wrangler, so it must be logged in to the personal account
-// (the default profile). CLOUDFLARE_ACCOUNT_ID is pinned below, so a login to
-// the wrong account fails instead of uploading somewhere else.
 
 import { readFile, writeFile, readdir, stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { spawnSync } from 'node:child_process'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { PUBLIC_BASE, SITE_PREFIX, fail, isPublished, upload } from './media.mjs'
 
-const ACCOUNT_ID = 'cb02bd56f948bddd989c3d0e6e983c78' // personal Cloudflare account
-const BUCKET = 'jeremy-magland-org-media'
-const PUBLIC_BASE = 'https://media.magland.org'
-const KEY_PREFIX = 'jeremy.magland.org/videos'
+const KEY_PREFIX = `${SITE_PREFIX}/videos`
 const TAKES_LIBRARY = path.join(os.homedir(), 'Videos/takes')
 // wrangler uploads objects through the Cloudflare API, which caps their size.
 const MAX_BYTES = 300 * 1024 * 1024
@@ -47,11 +39,6 @@ const input = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--slug
 if (!input) {
   console.error('usage: npm run video -- <takes video folder | name fragment | file.mp4> [--slug NAME]')
   process.exit(2)
-}
-
-function fail(msg) {
-  console.error(`error: ${msg}`)
-  process.exit(1)
 }
 
 // Resolve the input to { mp4, poster, takesDir }.
@@ -77,30 +64,6 @@ async function resolveInput(arg) {
 
 async function sha256(file) {
   return createHash('sha256').update(await readFile(file)).digest('hex')
-}
-
-// The query string keeps this check out of the URL's own cache entry;
-// otherwise Cloudflare caches the 404 of a not-yet-uploaded object for a few
-// minutes after the upload. A failed lookup (for example, while DNS for a new
-// domain propagates) counts as not published; uploading again is harmless.
-async function isPublished(url) {
-  try {
-    return (await fetch(`${url}?check=${Date.now()}`, { method: 'HEAD' })).ok
-  } catch {
-    return false
-  }
-}
-
-function upload(file, key, contentType) {
-  console.log(`uploading ${path.basename(file)} -> ${key}`)
-  const r = spawnSync(
-    'wrangler',
-    ['r2', 'object', 'put', `${BUCKET}/${key}`, '--file', file, '--content-type', contentType,
-      '--cache-control', 'public, max-age=31536000, immutable', '--remote'],
-    { stdio: 'inherit', env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: ACCOUNT_ID } },
-  )
-  if (r.error) fail(`could not run wrangler: ${r.error.message}`)
-  if (r.status !== 0) fail('upload failed (is wrangler logged in to the personal account?)')
 }
 
 // The words of a takes transcript that remain in the timeline, split into

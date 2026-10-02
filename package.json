@@ -10,7 +10,8 @@
     "thumbnails": "node scripts/generate-thumbnails.mjs",
     "video": "node scripts/video.mjs",
     "prov": "node scripts/prov.mjs",
-    "publish": "node scripts/publish.mjs"
+    "publish": "node scripts/publish.mjs",
+    "lib": "node scripts/lib.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

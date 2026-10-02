@@ -1,10 +1,10 @@
 ---
 import PostView from '../../components/PostView.astro'
-import { getPosts, type Post } from '../../lib/posts'
+import { getDrafts, type Post } from '../../lib/posts'
 
 export async function getStaticPaths() {
-  const posts = await getPosts()
-  return posts.map((post) => ({
+  const drafts = await getDrafts()
+  return drafts.map((post) => ({
     params: { slug: post.id },
     props: { post },
   }))
