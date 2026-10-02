@@ -65,7 +65,7 @@ npm run lib -- hello-counter
 
 which refuses to run if `libs/` has uncommitted or unpushed changes, reinstalls `libs/` from its lockfile, bundles the library, and uploads it as `jeremy.magland.org/libs/<name>-<hash>.js`, named by a hash of its contents and never overwritten. Next to it goes `<name>-<hash>.json`, a record of the commit, the build command, and the tool versions. It then points every post and draft that refers to the library (a development URL or an earlier upload) at the new URL. To check that a library can be rebuilt, check out its recorded commit and run `npm run lib -- <name> --build`, which prints the hash. See `scripts/lib.mjs`.
 
-The production build fails if a published post's `scripts` entry is not under `https://media.magland.org/jeremy.magland.org/libs/`. Drafts may point anywhere, so a draft deployed with a development URL just shows no widget. Browsers load module scripts from another origin only with CORS headers; the bucket's CORS rule is in `scripts/media-cors.json` (apply it with `wrangler r2 bucket cors set jeremy-magland-org-media --file scripts/media-cors.json`). Not done yet: an R2 bucket lock on `jeremy.magland.org/libs/`, so uploaded libraries cannot be overwritten or deleted.
+The production build fails if a published post's `scripts` entry is not under `https://media.magland.org/jeremy.magland.org/libs/`. Drafts may point anywhere, so a draft deployed with a development URL just shows no widget. Browsers load module scripts from another origin only with CORS headers; the bucket's CORS rule is in `scripts/media-cors.json` (apply it with `wrangler r2 bucket cors set jeremy-magland-org-media --file scripts/media-cors.json`).
 
 ## Themes
 
