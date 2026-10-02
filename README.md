@@ -35,6 +35,12 @@ npm run prov -- ~/Downloads/<name>.md.awh.jsonl
 
 which writes the post (the recorded text) and copies the recording next to it. See `scripts/prov.mjs`.
 
+## Editing on the site
+
+A post or draft can be edited on the site itself: press `e` on its page, or open it with `?edit` (needed the first time in a browser). The editor reads the post's file and its recording, if any, from GitHub (not from the built site, which can lag behind), and saves both in one commit to `main`, which rebuilds the site in a minute or two. A recorded post is edited in the arewehuman recording editor (`arewehuman/embed`, installed from GitHub), which extends its recording just as the VS Code extension does; other posts are edited without recording. Frontmatter is edited in a separate field and is not recorded. Saving is refused if the post or its recording changed on GitHub after the editor loaded them, so a stale copy never overwrites newer work; commits to other files are fine. Edits not yet saved are kept in the browser's localStorage and restored the next time the post is opened, unless the post changed on GitHub in the meantime, in which case they are offered as a download.
+
+Saving needs a fine-grained GitHub personal access token for `scratchrealm/jeremy.magland.org` with only "Contents: read and write". The editor asks for it once and keeps it in localStorage of that browser, so use it only in your own browsers ("Forget token" removes it). The `e` key does nothing in a browser without a token. The editor code is loaded only when editing starts. See `src/components/LiveEdit.astro`, `src/lib/live-edit.ts`, and `src/lib/github.ts`.
+
 ## Videos
 
 Video posts are screencasts recorded with [takes](https://vault1.magland.org/proof-of-concept/takes) plus a transcript. Videos are not committed to git; they are stored in the R2 bucket `jeremy-magland-org-media` (personal Cloudflare account) under `jeremy.magland.org/videos/` and served from https://media.magland.org/jeremy.magland.org/videos/. The bucket has one folder per site. After exporting a video in takes:

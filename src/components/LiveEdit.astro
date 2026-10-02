@@ -1,0 +1,37 @@
+---
+// Editing a post on the site itself: press `e` on a post or draft page (once a
+// GitHub token is stored in this browser), or open it with `?edit`. The editor
+// (src/lib/live-edit.ts, with CodeMirror and the arewehuman recorder) is
+// loaded only then, so readers never download it.
+interface Props {
+  // The post's file, relative to the repository root.
+  path: string
+}
+const { path } = Astro.props
+---
+
+<div data-live-edit data-path={path} hidden></div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-live-edit]')
+  if (root?.dataset.path) setup(root.dataset.path)
+
+  function setup(path: string) {
+    const open = () => import('../lib/live-edit').then((m) => m.openLiveEditor(path))
+    const hasToken = () => {
+      try {
+        return !!localStorage.getItem('liveEdit:githubToken')
+      } catch {
+        return false
+      }
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'e' || e.metaKey || e.ctrlKey || e.altKey || !hasToken()) return
+      const t = e.target
+      if (t instanceof HTMLElement && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      e.preventDefault()
+      void open()
+    })
+    if (new URLSearchParams(location.search).has('edit')) void open()
+  }
+</script>

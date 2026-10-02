@@ -7,6 +7,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import PostThumbnails from './PostThumbnails.astro'
 import ProvenanceReplay from './ProvenanceReplay.astro'
 import Comments from './Comments.astro'
+import LiveEdit from './LiveEdit.astro'
 import { formatDate, formatAuthors } from '../lib/site'
 import type { Post } from '../lib/posts'
 import HumanBadgeLight from '../assets/not-by-ai/written-by-humans-white.svg'
@@ -90,6 +91,7 @@ const originalHost = originalUrl
       )
     }
     {!draft && <Comments threadId={post.url} title={title} />}
+    {post.entry.filePath && <LiveEdit path={post.entry.filePath} />}
     <p data-pagefind-ignore>{draft ? <a href="/drafts/">← All drafts</a> : <a href="/posts/">← All posts</a>}</p>
   </article>
 </BaseLayout>
