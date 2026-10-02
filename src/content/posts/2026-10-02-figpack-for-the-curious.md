@@ -1,6 +1,6 @@
 # Figpack for the Curious
 
-[Figpack](https://figpack.org) is a Python (or MATLAB) package that lets you create interactive, data-rich scientific figures and optionally share them over the internet. This post is for those who are curious about how Figpack works - the design decisions, rationale, etc.
+[Figpack](https://figpack.org) is a Python (or MATLAB) package that lets you create interactive, data-rich scientific figures and optionally share them over the internet. This post is for those who are curious about how and the why of Figpack.
 
 ## What's the core idea?
 
@@ -8,7 +8,7 @@ Sharing static figures (PNGs, etc) is easy, but not as powerful as interactive v
 
 In Figpack, an interactive visualization (figure) is simply a collection of HTML/JavaScript/CSS files plus data. All in one directory. It's a stand-alone full-fledged website that doesn't depend on any backend services. You just upload it somewhere public and share the link. Assuming web browsers stay backward compatible, your archived figure will be available 10, 20 years from now. With this flexible definition of what a figure is, sharing the figure can be as simple as setting `upload=True` (with an upload key).
 
-## Okay, give me an example
+## What's an example?
 
 It's local first, so you can get started by running something like this:
 
@@ -99,4 +99,4 @@ Yes. Most figures are less than 10-20 MB, but up to a gigabyte is not unreseason
 
 ## Should I try out Figpack?
 
-Yes, you should.
+Yes, you should. :)
