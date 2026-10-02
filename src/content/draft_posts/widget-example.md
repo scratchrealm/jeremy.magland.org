@@ -1,6 +1,6 @@
 ---
 scripts:
-  - http://localhost:5174/hello-counter.js
+  - https://media.magland.org/jeremy.magland.org/libs/hello-counter-f0e314d1a71a.js
 ---
 # Widget example
 
