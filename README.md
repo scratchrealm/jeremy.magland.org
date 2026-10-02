@@ -89,6 +89,10 @@ the same selector for anything variables don't cover. Set
 default theme is `DEFAULT_THEME` in `src/lib/themes.ts`; the `:root` values
 in `global.css` are a no-JS fallback and should mirror it.
 
+## Related posts
+
+A post's page ends with a list of related posts, taken from `src/data/related.json`. That file is a list of groups, each a `topic` (a label for whoever edits the file, not shown) and a list of published post ids (file names without `.md`). Every post in a group links to every other, so links always go both ways; a pair is a group of two, and a post may be in several groups. This keeps the links out of the post bodies, which matters for recorded posts, whose body must match the recording. An id that is not a published post fails the build, so after `npm run publish` add the new dated id, not the draft slug. Drafts show no related posts. Code: `src/lib/related.ts`, `src/components/RelatedPosts.astro`.
+
 ## Search
 
 The magnifier at the end of the nav (or the `/` key) opens a search dialog over all pages and posts, including video transcripts. The index is built by [Pagefind](https://pagefind.app), which runs after `astro build` (see the `build` script) and writes a static index to `dist/pagefind/`; the browser loads it from there on first use, so there is no server. A match under a subheading links to that section of the page. The dialog is `src/components/Search.astro` and its styles are in the Site search section of `src/styles/global.css`.

@@ -5,6 +5,7 @@
 import { render } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import PostThumbnails from './PostThumbnails.astro'
+import RelatedPosts from './RelatedPosts.astro'
 import ProvenanceReplay from './ProvenanceReplay.astro'
 import Comments from './Comments.astro'
 import LiveEdit from './LiveEdit.astro'
@@ -73,6 +74,7 @@ const originalHost = originalUrl
     </div>
     {provenance && <ProvenanceReplay src={provenance.url} />}
     {thumbnails && thumbnails.length > 0 && <PostThumbnails urls={thumbnails} />}
+    <RelatedPosts post={post} />
     {
       writtenByHuman && (
         <footer class="post-footer" data-pagefind-ignore>

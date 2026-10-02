@@ -46,14 +46,6 @@
     ]
   },
   {
-    "id": "dandi-ai-notebooks",
-    "name": "DANDI AI Notebooks",
-    "description": "AI-powered chat assistant and automated notebook generator for exploring neurophysiology datasets in the DANDI Archive (with Ben Dichter, Ryan Ly, and Oliver Ruebel).",
-    "links": [
-      { "label": "paper", "url": "https://doi.org/10.1038/s41597-025-06285-x" }
-    ]
-  },
-  {
     "id": "isosplit",
     "name": "Isosplit",
     "description": "Non-parametric clustering with no adjustable parameters, based on Hartigan's dip statistic and isotonic regression.",
