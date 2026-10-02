@@ -37,7 +37,7 @@ Then copy the URL and send to your colleagues over email/slack or whatever. They
 
 I ran it myself and [got the URL](https://figures.figpack.org/figures/default/f37b50f8ad019a80e709f30d/index.html) `https://figures.figpack.org/figures/default/f37b50f8ad019a80e709f30d/index.html`
 
-<iframe src="https://figures.figpack.org/figures/default/f37b50f8ad019a80e709f30d/index.html" height=300></iframe>
+<iframe src="https://figures.figpack.org/figures/default/f37b50f8ad019a80e709f30d/index.html" height=500 width="100%"></iframe>
 
 To explore all the different Figpack widgets and views that are available, see the [Figpack documentation](https://flatironinstitute.github.io/figpack/).
 
@@ -47,7 +47,7 @@ This post is for those who are curious about how Figpack works - the design deci
 
 Sharing static figures (PNGs, etc) is easy, but not as powerful as interactive visualizations (feature-rich GUIs), especially for complex datasets. Various libraries let you create and share interactive web applications, but you usually need to host them with some backend services, and you are limited as to what types of views are available.
 
-In Figpack, an interactive visualization (figure) is simply a directory of HTML/JavaScript/CSS files plus data. All in one directory. A stand-alone full-fledged website that doesn't depend on any backend services. You just uploaded it somewhere public and share the link. Web browsers can load figures today, and (assuming browsers stay backward compatible), your archived figure will be available 10, 20 years from now. Given this simplification of what a figure is, sharing the figure can be as simple as setting `upload=True` (with an upload key).
+In Figpack, an interactive visualization (figure) is simply a directory of HTML/JavaScript/CSS files plus data. All in one directory. A stand-alone full-fledged website that doesn't depend on any backend services. You just upload it somewhere public and share the link. Web browsers can load figures today, and (assuming browsers stay backward compatible), your archived figure will be available 10, 20 years from now. Given this simplification of what a figure is, sharing the figure can be as simple as setting `upload=True` (with an upload key).
 
 ## Where do local figures live?
 
@@ -55,11 +55,11 @@ When you create a local figure (the default), the figure is a stand-alone direct
 
 ## Who stores the cloud data? Where do shared figures live?
 
-It's very INexpensive to host static data on CloudFlare (AWS S3 is also supported by Figpack, but it's more expensive and you pay for network egress). So I (the author of figpack) just host a bucket and I give out API keys (figpack api keys, not bucket credentials) to folks who are doing open science, for a reasonable limited use. For labs that want to use Figpack more heavily for sharing data, there's a way that they can easily host their own bucket for use with the system. But I like to make it easy for people to get started.
+It's very INexpensive to host static data on Cloudflare (AWS S3 is also supported by Figpack, but it's more expensive and you pay for network egress). So I (the author of figpack) just host a bucket and I give out API keys (figpack api keys, not bucket credentials) to folks who are doing open science, for a reasonable limited use. For labs that want to use Figpack more heavily for sharing data, there's a way that they can easily host their own bucket for use with the system. But I like to make it easy for people to get started.
 
 Is your data going to persist forever on the Figpack network? No, unless you provide your own bucket and don't tear it down. Figpack has a multi-tier system for managing expectations of how long figures will remain available.
 
-(1) By default, figures expire after 24 hours. This let's people upload a lot of data without worrying about cluttering the bucket long term. The figures expire (become unavailable), but can be renewed until they are actually deleted by an admin (which I don't do very often).
+(1) By default, figures expire after 24 hours. This lets people upload a lot of data without worrying about cluttering the bucket long term. The figures expire (become unavailable), but can be renewed until they are actually deleted by an admin (which I don't do very often).
 
 (2) You can renew/extend the lifetime of a figure that you want to be around for more than a day - like for a week or so.
 
@@ -75,7 +75,7 @@ A Figpack figure consists of the rendering code (HTML/JavaScript) and the data (
 
 There IS a [native MATLAB version of Figpack](https://github.com/magland/figpack_experimental_matlab), but it's experimental. Let me know if you are using it... we can build it out more.
 
-## Can I create custom views types?
+## Can I create custom view types?
 
 Yes, absolutely! That's the whole point. And please share them with the community.
 
@@ -91,4 +91,4 @@ Yes. And the Figpack/Zarr integration allows figures to efficiently lazy-load ch
 
 ## Summary
 
-Figpack let's you explore your complex scientific data with interactive visualizations that can be full-fledged user interfaces (websites). There's a lot of flexibility on the types of visualizations you can generate. And importantly, you share your figures over the internet, and archive figures for long-term availability.
+Figpack lets you explore your complex scientific data with interactive visualizations that can be full-fledged user interfaces (websites). There's a lot of flexibility on the types of visualizations you can generate. And importantly, you can share your figures over the internet, and archive figures for long-term availability.
