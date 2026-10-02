@@ -91,7 +91,7 @@ If you don't use AI for coding, same thing. Review the documentation manually. A
 
 ## Can Figpack be used with very large datasets?
 
-Yes. And the Figpack/Zarr integration allows figures to efficiently lazy-load chunks of data and doesn't need to download the entire dataset to the browser at once. Figpack was designed to do this. See the documentation for examples.
+Yes. Most figures are less than 10-20 MB, but up to a few GB is not unreseasonable (in principle the system has no hard limit). The Figpack/Zarr integration allows figures to efficiently lazy-load chunks of data and doesn't need to download the entire dataset to the browser at once. Figpack was designed to do this. See the documentation for examples.
 
 ## Summary
 
