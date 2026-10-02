@@ -45,9 +45,13 @@ This post is for those who are curious about how Figpack works - the design deci
 
 ## What's the core idea?
 
-Sharing static figures (PNGs, etc) is easy, but not as powerful as interactive visualizations (feature-rich GUIs), especially for complex datasets. Various libraries let you create and share interactive web applications, but you usually need to host them with some backend services, and you are limited as to what types of views are available.
+Sharing static figures (PNGs, etc) is easy, but not as powerful as interactive visualizations (feature-rich GUIs), especially for complex datasets. Various libraries let you create and share interactive web applications, but you usually need to host them with some backend services. The libraries that can export lightweight interactive figures (Plotly, Bokeh), are limited in the size and complexity of the datasets and views that they support.
 
 In Figpack, an interactive visualization (figure) is simply a directory of HTML/JavaScript/CSS files plus data. All in one directory. A stand-alone full-fledged website that doesn't depend on any backend services. You just upload it somewhere public and share the link. Web browsers can load figures today, and (assuming browsers stay backward compatible), your archived figure will be available 10, 20 years from now. Given this simplification of what a figure is, sharing the figure can be as simple as setting `upload=True` (with an upload key).
+
+## What types of data can be visualized?
+
+The target application is neuroscience, especially neurophysiology data where you want to have complex layouts with time-synchronized panels. But there's nothing about Figpack that is specific to that domain. If you can imagine it, figpack can probably support it.
 
 ## Where do local figures live?
 
