@@ -86,62 +86,11 @@
     ]
   },
   {
-    "id": "nwb-assistant",
-    "name": "NWB Assistant",
-    "description": "Experimental AI chat assistant for navigating NWB documentation.",
-    "links": [
-      { "label": "live", "url": "https://magland.github.io/nwb-assistant/chat" },
-      { "label": "source", "url": "https://github.com/magland/nwb-assistant" }
-    ]
-  },
-  {
-    "id": "stan-assistant",
-    "name": "Stan Assistant",
-    "description": "Experimental AI chat assistant for Stan, with access to the Stan User's Guide.",
-    "links": [
-      { "label": "live", "url": "https://magland.github.io/stan-assistant/chat" },
-      { "label": "source", "url": "https://github.com/magland/stan-assistant" }
-    ]
-  },
-  {
-    "id": "neurosift-chat",
-    "name": "Neurosift chat",
-    "description": "Experimental AI chat assistant for exploring the DANDI Archive and OpenNeuro.",
-    "links": [
-      { "label": "live", "url": "https://chat.neurosift.app/" }
-    ]
-  },
-  {
-    "id": "spurious-discovery-tests",
-    "name": "Spurious Discovery Tests",
-    "description": "Synthetic experiments probing whether large language models avoid false discoveries when analyzing datasets with no underlying signal.",
-    "links": [
-      { "label": "source", "url": "https://github.com/magland/spurious-discovery-tests" }
-    ]
-  },
-  {
-    "id": "minicline",
-    "name": "minicline",
-    "description": "Command-line and Python interface for software engineering tasks with large language models.",
-    "links": [
-      { "label": "source", "url": "https://github.com/magland/minicline" }
-    ]
-  },
-  {
     "id": "mcmc-monitor",
     "name": "MCMC Monitor",
     "description": "Real-time tracking and diagnostic visualization of Stan MCMC runs in the browser (with Jeff Soules).",
     "links": [
       { "label": "source", "url": "https://github.com/flatironinstitute/mcmc-monitor" }
-    ]
-  },
-  {
-    "id": "nbfiddle",
-    "name": "nbfiddle",
-    "description": "Web-based Jupyter notebook interface using browser storage, designed for self-contained analysis notebooks with remote data sources.",
-    "links": [
-      { "label": "nbfiddle.app", "url": "https://nbfiddle.app/" },
-      { "label": "source", "url": "https://github.com/flatironinstitute/nbfiddle" }
     ]
   },
   {
@@ -160,15 +109,6 @@
     "links": [
       { "label": "docs", "url": "https://finufft.readthedocs.io/" },
       { "label": "source", "url": "https://github.com/flatironinstitute/finufft" }
-    ]
-  },
-  {
-    "id": "benchcompress",
-    "name": "Benchcompress",
-    "description": "Benchmarking framework for compression algorithms on scientific data arrays.",
-    "links": [
-      { "label": "results", "url": "https://magland.github.io/benchcompress/" },
-      { "label": "source", "url": "https://github.com/magland/benchcompress" }
     ]
   },
   {
