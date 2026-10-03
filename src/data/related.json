@@ -1,0 +1,32 @@
+[
+  {
+    "topic": "Mochi",
+    "posts": [
+      "2026-09-26-spin-up-your-own-git-forge-with-mochi",
+      "2026-09-28-deploy-mochi-vault-to-cloud",
+      "2026-09-30-embracing-the-non-scalability"
+    ]
+  },
+  {
+    "topic": "arewehuman",
+    "posts": [
+      "2026-09-29-are-we-human",
+      "2026-10-01-are-we-human-file-format-v2",
+      "2026-10-01-are-we-human-git-collaboration"
+    ]
+  },
+  {
+    "topic": "numbl and mip",
+    "posts": [
+      "2026-07-07-introducing-mip",
+      "2026-07-10-matrix-multiplication-in-the-browser"
+    ]
+  },
+  {
+    "topic": "Scientific data in the browser",
+    "posts": [
+      "2026-06-16-lazy-reading-remote-hdf5",
+      "2026-10-02-figpack-for-the-curious"
+    ]
+  }
+]

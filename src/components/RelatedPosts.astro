@@ -1,0 +1,53 @@
+---
+// Links to related posts (see src/lib/related.ts), title + date like the home
+// page's recent posts.
+import { formatDate } from '../lib/site'
+import { getRelated } from '../lib/related'
+import type { Post } from '../lib/posts'
+
+interface Props {
+  post: Post
+}
+
+const related = await getRelated(Astro.props.post)
+---
+
+{
+  related.length > 0 && (
+    <section class="related-posts" data-pagefind-ignore>
+      <h2>Related posts</h2>
+      <ul>
+        {related.map((p) => (
+          <li>
+            <a href={p.url}>{p.title}</a>
+            <span class="date">{formatDate(p.date)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .related-posts {
+    margin-top: 2.5rem;
+  }
+
+  .related-posts ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .related-posts li {
+    margin: 0.4rem 0;
+  }
+
+  .related-posts .date {
+    font-family: var(--font-ui);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-left: 0.6rem;
+    white-space: nowrap;
+  }
+</style>
