@@ -4,7 +4,7 @@ summary: Can you tell whether this was written by me, Jeremy Magland, a human? O
 replayProminent: true
 ---
 
-Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI? I would like you to know the truth, which is of course that I crafted this document myself. But how can I convince you? I suppose you could just trust me when I tell you. But I'm not satisfied with that. I worked hard on this, and I worked especially hard to resist the temptation to throw it into Claude or ChatGPT. And I want you to know the truth! I want you to hear my voice, and to know it is my voice.
+Can you tell whether this was written by me, Jeremy Magland, a human? Or is it AI? In fact, I crafted this document myself, and you'll probably just believe me. But with AI so uniquitous these days, you can't know for sure. And I'm not satisfied with that. I want you to hear my voice, and to know it's actually me!
 
 A colleague pointed me to this cool project called [ReelDocs](https://blog.danromik.com/on-provably-writing-without-ai) by Dan Romik that tries to solve this problem by tracking the composition history of the document and providing a link where the reader can review that history, played back at high speed, with some metrics that give an indication of human authorship. Dan explains that he enjoys using AI for tasks like coding and math, but he very much doesn't enjoy "reading texts trying to pass themselves off as written by a human when they are actually written by AI"! I took that concept and made a similar app called "[arewehuman](https://magland.github.io/arewehuman)". It is similar to the ReelDocs app, but I put my own spin on it.
 
