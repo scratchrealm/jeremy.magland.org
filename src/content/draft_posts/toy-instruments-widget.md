@@ -1,6 +1,6 @@
 ---
 scripts:
-  - https://media.magland.org/jeremy.magland.org/libs/toy-instruments-7de303656f96.js
+  - https://media.magland.org/jeremy.magland.org/libs/toy-instruments-8c4110eb7391.js
 ---
 # Toy instruments widget
 
