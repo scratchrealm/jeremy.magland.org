@@ -21,6 +21,6 @@ But it's hard to differentiate between chaos and a failure of the solver (e.g., 
 
 <toy-instrument-sim exaggeration="1" settings="#/bead-string?n=5&tension=5.001&excBead=2&pluckAmp=0.0100001&cfl=0.1"></toy-instrument-sim>
 
-But again, what if this is just a failure of the solver? For example, perhaps we did not choose a small enough timestep. To convince yourself that this is indeed chaos open the above simulation using the "Open the full app" and then modify the "step safety" parameter, which controls the timestep. As we decrease the timestep by factors of 2, the spectrogram never settles to a converged value. Instead, each spectrogram exhibits the same chaotic character. Of course, any time you change any of the parameters, including those that just affect the numerics of the simulation, you will observe changes to the spectrogram. This is the nature of the chaos.
+But again, what if this is just a failure of the solver? For example, perhaps we did not choose a small enough timestep. To convince yourself that this is indeed chaos open the above simulation using the "Open the full app" and then modify the "step safety" parameter, which controls the timestep. As we decrease the timestep by factors of 2, the spectrogram never settles to a converged value. Instead, each spectrogram exhibits the same chaotic character. Of course, any time you change any of the parameters even slightly, including those that just affect the numerics of the simulation, you will observe changes to the spectrogram. This is the nature of the chaos.
 
 **Conclusion:** It's chaos.
