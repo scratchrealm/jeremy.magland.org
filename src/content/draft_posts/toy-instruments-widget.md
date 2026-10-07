@@ -4,8 +4,6 @@ scripts:
 ---
 # Toy instruments widget
 
-<toy-instrument-sim name="bead-string-pluck-2mm" settings="https://magland.github.io/toy-instruments/#/bead-string?preset=0&gpu=0&duration=3&pluckAmp=0.002"></toy-instrument-sim>
+<toy-instrument-sim settings="#/bead-string?n=5&tension=2&excBead=2&pluckAmp=0.0001&pickupMode=sum"></toy-instrument-sim>
 
-<toy-instrument-sim name="bead-string-pluck-4mm" settings="https://magland.github.io/toy-instruments/#/bead-string?preset=0&gpu=0&duration=3&pluckAmp=0.004"></toy-instrument-sim>
-
-<toy-instrument-sim name="bead-string-pluck-8mm" settings="https://magland.github.io/toy-instruments/#/bead-string?preset=0&gpu=0&duration=3&pluckAmp=0.008"></toy-instrument-sim>
+<toy-instrument-sim settings="#/bead-string?n=5&tension=2&excBead=2&pluckAmp=0.0003&pickupMode=sum"></toy-instrument-sim>
