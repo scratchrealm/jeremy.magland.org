@@ -7,6 +7,6 @@
     "esbuild": "0.28.2"
   },
   "dependencies": {
-    "toy-instruments": "git+https://vault1.magland.org/proof-of-concept/toy-instruments.git#7d6ced2"
+    "toy-instruments": "git+https://vault1.magland.org/proof-of-concept/toy-instruments.git#bc03839"
   }
 }
