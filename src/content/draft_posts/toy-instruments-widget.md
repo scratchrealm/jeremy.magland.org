@@ -1,6 +1,6 @@
 ---
 scripts:
-  - http://localhost:5174/toy-instruments.js
+  - https://media.magland.org/jeremy.magland.org/libs/toy-instruments-7de303656f96.js
 ---
 # Toy instruments widget
 
