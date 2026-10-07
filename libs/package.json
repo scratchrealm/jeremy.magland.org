@@ -5,5 +5,8 @@
   "description": "Build recipes for the widget libraries embedded in posts; see README.md, Widget libraries",
   "devDependencies": {
     "esbuild": "0.28.2"
+  },
+  "dependencies": {
+    "toy-instruments": "git+https://vault1.magland.org/proof-of-concept/toy-instruments.git#e01df49"
   }
 }
