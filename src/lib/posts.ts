@@ -77,9 +77,13 @@ function toPost(entry: Entry): Post {
   let provenance: Post['provenance']
   const file = entry.filePath && `${entry.filePath}.awh.jsonl`
   if (file && existsSync(file)) {
-    // A replay is only honest if it ends in exactly the text being shown.
+    // A replay is only honest if it ends in exactly the text being shown: the
+    // whole file, or the text after its frontmatter for a recording that
+    // leaves the frontmatter out (one made before 2026-10-14, or a post made
+    // from a recording by `npm run prov`, which may add a title).
     const rec = parseRecording(readFileSync(file, 'utf8'))
-    if (body.trim() !== rec.text.trim())
+    const whole = readFileSync(entry.filePath!, 'utf8').replace(/\r\n/g, '\n')
+    if (rec.text.trim() !== whole.trim() && rec.text.trim() !== body.trim())
       fail(`the text differs from its recording ${file}; edit it in the recording editor`)
     provenance = { file, url: draft ? `/drafts/${id}.md.awh.jsonl` : `/provenance/${id}.md.awh.jsonl` }
   }

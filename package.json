@@ -17,7 +17,7 @@
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.0",
-    "arewehuman": "github:magland/arewehuman#bf33be9669e21dd404a268589c7f62a7cbf2383e",
+    "arewehuman": "github:magland/arewehuman#04324b64c9e18d6440ceee27ca0e101990539ce9",
     "astro": "^5.17.3",
     "markdown-it": "^15.0.2"
   },

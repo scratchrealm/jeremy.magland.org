@@ -2,8 +2,10 @@
 // this module only when editing starts). The post's file, and its arewehuman
 // recording if it has one, are read from GitHub (not from the built site,
 // which may lag behind), edited in a recording editor, and saved as one commit
-// to `main`, which rebuilds the site. Frontmatter is edited separately and is
-// not recorded, as in the VS Code extension.
+// to `main`, which rebuilds the site. The whole file is edited and recorded,
+// frontmatter included, as in the VS Code extension. (Recordings made before
+// 2026-10-14 left the frontmatter out; the editor records it as "other" the
+// first time such a post is edited.)
 //
 // Edits not yet saved are kept in localStorage, with the blob shas they were
 // based on, and restored when the same post is edited again.
@@ -21,10 +23,9 @@ interface Base {
 
 interface Draft {
   base: Base
-  front: string
-  body: string
+  front?: string // in drafts kept before 2026-10-14, the frontmatter, edited apart from `body`
+  body: string // the file's text
   recording: string | null
-  changed: boolean // whether the body was edited (else only the frontmatter)
   at: number // epoch ms
 }
 
@@ -79,7 +80,6 @@ export function openLiveEditor(path: string) {
   const previewBox = h('input', { type: 'checkbox', checked: pref('preview', true) })
   const sourcesBox = h('input', { type: 'checkbox', checked: pref('sources', true) })
   const sourcesLabel = h('label', { hidden: true }, sourcesBox, ' Tint untyped')
-  const frontBtn = h('button', { type: 'button', textContent: 'Frontmatter' })
   const tokenBtn = h('button', { type: 'button', textContent: 'Forget token', title: 'Remove the GitHub token from this browser' })
   const bar = h(
     'div',
@@ -88,7 +88,6 @@ export function openLiveEditor(path: string) {
     h('span', { class: 'live-edit-rec' }),
     status,
     h('span', { class: 'live-edit-spacer' }),
-    frontBtn,
     sourcesLabel,
     h('label', {}, previewBox, ' Preview'),
     tokenBtn,
@@ -96,10 +95,9 @@ export function openLiveEditor(path: string) {
     closeBtn,
   )
   const notice = h('div', { class: 'live-edit-notice', hidden: true })
-  const front = h('textarea', { class: 'live-edit-front', spellcheck: false, hidden: true, rows: 6 })
   const host = h('div', { class: 'live-edit-editor' })
   const preview = h('div', { class: 'live-edit-preview prose' })
-  const panes = h('div', { class: 'live-edit-panes' }, h('div', { class: 'live-edit-left' }, front, host), preview)
+  const panes = h('div', { class: 'live-edit-panes' }, h('div', { class: 'live-edit-left' }, host), preview)
   const overlay = h('div', { class: 'live-edit', role: 'dialog', ariaLabel: `Editing ${name}` }, bar, notice, panes)
   document.body.append(overlay)
   document.documentElement.classList.add('live-editing')
@@ -107,7 +105,6 @@ export function openLiveEditor(path: string) {
   let editor: EmbeddedEditor | null = null
   let base: Base = { md: null, rec: null }
   let commit: string | null = null
-  let saved = { front: '', body: '' } // as in the files `base` refers to
   let changedSinceSave = false
   let draftTimer = 0
   let draftPending = false
@@ -126,7 +123,8 @@ export function openLiveEditor(path: string) {
   const renderPreview = () => {
     preview.hidden = !previewBox.checked
     panes.classList.toggle('live-edit-with-preview', previewBox.checked)
-    if (editor && previewBox.checked) preview.innerHTML = md.render(editor.text)
+    // The preview shows the post as the site does, without its frontmatter.
+    if (editor && previewBox.checked) preview.innerHTML = md.render(splitFrontmatter(editor.text).body)
   }
   previewBox.addEventListener('change', () => {
     setPref('preview', previewBox.checked)
@@ -136,17 +134,13 @@ export function openLiveEditor(path: string) {
     setPref('sources', sourcesBox.checked)
     editor?.setShowSources(sourcesBox.checked)
   })
-  frontBtn.addEventListener('click', () => {
-    front.hidden = !front.hidden
-    frontBtn.classList.toggle('live-edit-on', !front.hidden)
-  })
   tokenBtn.addEventListener('click', () => {
     if (!confirm('Remove the GitHub token from this browser? You will need to paste it again to save.')) return
     setToken(null)
     close()
   })
 
-  const dirty = () => changedSinceSave || front.value !== saved.front
+  const dirty = () => changedSinceSave
 
   const keepDraft = async () => {
     draftPending = false
@@ -155,12 +149,12 @@ export function openLiveEditor(path: string) {
       storeDraft(path, null)
       return
     }
-    const ok = storeDraft(path, { base, front: front.value, body: editor.text, recording: await editor.recording(), changed: changedSinceSave, at: Date.now() })
+    const ok = storeDraft(path, { base, body: editor.text, recording: await editor.recording(), at: Date.now() })
     if (!ok) setStatus('Could not keep unsaved edits in this browser (storage full?)', true)
   }
 
-  // `touched` is for any edit, `onChange` for edits of the body (the recorded text).
-  const touched = () => {
+  const onChange = () => {
+    changedSinceSave = true
     saveBtn.disabled = busy || !dirty()
     if (!busy) setStatus(dirty() ? 'Unsaved changes' : '')
     draftPending = true
@@ -169,17 +163,12 @@ export function openLiveEditor(path: string) {
     clearTimeout(previewTimer)
     previewTimer = window.setTimeout(renderPreview, 150)
   }
-  const onChange = () => {
-    changedSinceSave = true
-    touched()
-  }
-  front.addEventListener('input', touched)
 
-  const mount = (body: string, recording: string | null) => {
+  const mount = (text: string, recording: string | null) => {
     editor?.destroy()
     editor = new EmbeddedEditor({
       parent: host,
-      body,
+      body: text,
       recording,
       docKey: `jeremy.magland.org:${path}`,
       clips,
@@ -200,13 +189,10 @@ export function openLiveEditor(path: string) {
     const [mdFile, recFile] = await Promise.all([readFile(token, path, commit), readFile(token, recPath, commit)])
     if (!mdFile) throw new Error(`${path} is not on ${REPO} main (was it renamed or published?)`)
     base = { md: mdFile.sha, rec: recFile?.sha ?? null }
-    const split = splitFrontmatter(mdFile.text)
-    saved = { front: split.front, body: split.body }
     const draft = useDraft ? loadDraft(path) : null
     if (draft && draft.base.md === base.md && draft.base.rec === base.rec) {
-      front.value = draft.front
-      mount(draft.body, draft.recording)
-      changedSinceSave = draft.changed ?? true
+      mount(joinFrontmatter(draft.front ?? '', draft.body), draft.recording)
+      changedSinceSave = true
       saveBtn.disabled = !dirty()
       const discard = h('button', { type: 'button', textContent: 'Discard them' })
       discard.addEventListener('click', () => {
@@ -220,7 +206,7 @@ export function openLiveEditor(path: string) {
     } else {
       if (draft) {
         // Based on files that have changed since: offer them as a download rather than lose them.
-        const a = downloadLink('Download them', joinFrontmatter(draft.front, draft.body), name)
+        const a = downloadLink('Download them', joinFrontmatter(draft.front ?? '', draft.body), name)
         const drop = h('button', { type: 'button', textContent: 'Forget them' })
         drop.addEventListener('click', () => {
           storeDraft(path, null)
@@ -228,13 +214,11 @@ export function openLiveEditor(path: string) {
         })
         showNotice(`Unsaved edits from ${time(draft.at)} were based on an older version of this post, so they were not restored. `, a, ' · ', drop)
       }
-      front.value = saved.front
-      mount(saved.body, recFile?.text ?? null)
+      mount(mdFile.text, recFile?.text ?? null)
       changedSinceSave = false
       saveBtn.disabled = true
       setStatus('')
     }
-    if (front.value.trim()) frontBtn.textContent = 'Frontmatter ✓'
   }
 
   const save = async () => {
@@ -244,19 +228,15 @@ export function openLiveEditor(path: string) {
     saveBtn.disabled = true
     setStatus('Saving…')
     try {
-      const body = editor.text
-      const frontText = front.value
-      // The recording is left alone if only the frontmatter changed.
-      const recording = changedSinceSave ? await editor.recording() : null
-      const fileText = joinFrontmatter(frontText, body)
+      const fileText = editor.text
+      const recording = editor.recorded ? await editor.recording() : null
       const files: Record<string, string> = { [path]: fileText }
       if (recording !== null) files[recPath] = recording
       const sha = await commitFiles(token, files, { [path]: base.md, [recPath]: base.rec }, `Edit ${name} on the site`)
       base = { md: await blobSha(fileText), rec: recording === null ? base.rec : await blobSha(recording) }
       commit = sha
       // Edits made while saving stay unsaved.
-      changedSinceSave = editor.text !== body
-      saved = { front: frontText, body }
+      changedSinceSave = editor.text !== fileText
       clearTimeout(draftTimer)
       await keepDraft()
       const link = h('a', { href: `https://github.com/${REPO}/commit/${sha}`, target: '_blank', rel: 'noopener', textContent: sha.slice(0, 7) })
@@ -268,7 +248,7 @@ export function openLiveEditor(path: string) {
         setStatus('Not saved', true)
         showNotice(
           `${e.message} Saving now would overwrite that change. `,
-          downloadLink('Download your version', joinFrontmatter(front.value, editor.text), name),
+          downloadLink('Download your version', editor.text, name),
           ', then close and reopen the editor to load the newer one.',
         )
       } else setStatus(`Not saved: ${(e as Error).message}`, true)

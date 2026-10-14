@@ -1218,10 +1218,6 @@ html.live-editing {
   opacity: 0.6;
 }
 
-.live-edit button.live-edit-on {
-  border-color: var(--link);
-}
-
 .live-edit-notice {
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--border);
@@ -1246,18 +1242,6 @@ html.live-editing {
   flex-direction: column;
   min-height: 0;
   overflow: auto;
-}
-
-.live-edit-front {
-  margin: 0.75rem 1rem 0;
-  padding: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--text);
-  background: var(--bg-code);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  resize: vertical;
 }
 
 .live-edit-editor {
