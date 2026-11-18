@@ -40,7 +40,7 @@ When you run the code, a new browser tab opens and the interactive plot appears.
 
 For detailed instructions, see [this documentation and demo](https://numbl.org/docs/live-plots-from-c/).
 
-Here's a more involved example:
+Here's a more involved example (AI generated):
 
 ```C
 /*
