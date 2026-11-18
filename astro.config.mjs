@@ -8,5 +8,9 @@ export default defineConfig({
   site: 'https://jeremy.magland.org',
   // Drafts are left out of the sitemap (see src/pages/drafts/).
   integrations: [mdx(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/drafts/') })],
-  markdown: { remarkPlugins: [remarkPostTitle] },
+  markdown: {
+    remarkPlugins: [remarkPostTitle],
+    // Code fence language names are case-sensitive in Shiki; accept `C` for C.
+    shikiConfig: { langAlias: { C: 'c' } },
+  },
 })
